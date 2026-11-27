@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -58,6 +59,21 @@ def apply(path: Path, old: str, new: str) -> bool:
     return True
 
 
+def digest_mutation() -> tuple[str, str] | None:
+    """The digest prefix the reproduce block prints, and a same-length wrong one.
+
+    Read from DEPOSIT.md rather than written here: the draft is re-hashed whenever it is
+    edited, and a hard-coded prefix turns this mutation into a silent skip exactly when the
+    guard it tests is most likely to be needed.
+    """
+    m = re.search(r"# ([0-9a-f]{8})\.\.\.", DEPOSIT.read_text(encoding="utf-8"))
+    if not m:
+        return None
+    prefix = m.group(1)
+    flipped = ("0" if prefix[0] != "0" else "1") + prefix[1:]
+    return f"# {prefix}...", f"# {flipped}..."
+
+
 def inventory_row() -> tuple[str, str] | None:
     """A DEPOSIT inventory row whose size can be nudged without changing the file's length."""
     text = DEPOSIT.read_text(encoding="utf-8")
@@ -91,8 +107,10 @@ def mutations() -> list[tuple[str, Path, str, str, str]]:
     if row is not None:
         out.append(("DEPOSIT inventory row", DEPOSIT, f"| {row[0]} |", f"| {row[1]} |",
                     "DEPOSIT.md:"))
-    out.append(("DEPOSIT reproduce digest", DEPOSIT, "# 73430eeb...", "# 83430eeb...",
-                "reproduce block prints"))
+    digest = digest_mutation()
+    if digest is not None:
+        out.append(("DEPOSIT reproduce digest", DEPOSIT, digest[0], digest[1],
+                    "reproduce block prints"))
     if DRAFT.exists():
         out.append(("draft names a bare items.jsonl", DRAFT, "**Item set.**",
                     "**Item set.** `items.jsonl`.", "names a bare"))
