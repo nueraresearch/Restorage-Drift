@@ -292,5 +292,13 @@ theory against Section 7 of the protocol.
   locale. Pages are read from the built PDFs, which is why `build.py` runs the check
   before the build with `--skip-pages` and again after it.
 
-The paper is 6,853 words / 16 pp (was 6,848 measured under the C locale); S1 is 5,167
-words / 9 pp (was 5,142).
+- Section 5.6's landmark ordering was stated without its proof, and two reviews read it
+  as false with four candidates. It is not: a rival that exceeds the original forces the
+  original below one half, because the two shares sum to at most 1, so majority loss
+  cannot follow overtaking. What four candidates do allow is the reverse gap, and the
+  passage now says so with the (0.4, 0.2, 0.2, 0.2) case in the text, where no rival
+  overtakes and the second landmark is infinite. Section 6 of S1 states the same convention. The same
+  review objected that Section 3's examples are not evidence; the closing sentence said
+  they "show" the pathways, and now says they illustrate them.
+
+The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 5,206 words / 9 pp (was 5,167).

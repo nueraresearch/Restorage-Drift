@@ -141,7 +141,7 @@ Scene dialogue ("No. I am your father.")
 \vspace{9pt}
 ```
 
-Taken together, these three examples show that qualifier/schema compression, orthographic compression, and contextual compression can each trigger drift through distinct pathways and threshold moments, rather than forcing every case through a single identical failure mode.
+Taken together, these three examples illustrate how qualifier/schema compression, orthographic compression, and contextual compression can each produce drift through distinct pathways and threshold moments, rather than forcing every case through a single identical failure mode.
 
 ## **4\. Relationship to Existing Models**
 
@@ -256,7 +256,7 @@ $$T_A = \min\{\, n : x^{*} \notin A_n \,\}, \qquad T_d = \min\left\{\, n : S_n(x
 
 $$T_o = \min\{\, n : \exists\, y \neq x^{*},\; S_n(y) > S_n(x^{*}) \,\}.$$
 
-$T_A$ measures loss of availability, $T_d$ loss of majority probability, and $T_o$ the first point at which a rival holds greater individual probability, with $T_A = \infty$ or $T_d = \infty$ where the event is not observed within the horizon. For a normalized distribution, $T_d \leq T_o$ wherever both are defined: while the original holds at least half the mass, no individual rival can exceed it.
+$T_A$ measures loss of availability, $T_d$ loss of majority probability, and $T_o$ the first point at which a rival holds greater individual probability, with $T_A = \infty$ or $T_d = \infty$ where the event is not observed within the horizon. For a normalized distribution, $T_d \leq T_o$ wherever both are defined: if some rival $y$ has $S_n(y) > S_n(x^{*})$, then $2S_n(x^{*}) < S_n(x^{*}) + S_n(y) \leq 1$, so $S_n(x^{*}) < \tfrac{1}{2}$ and majority loss cannot follow overtaking. The converse fails once three or more candidates are scored: a distribution of $(0.4, 0.2, 0.2, 0.2)$ has lost its majority while no rival has overtaken it, and there $T_o = \infty$ with the inequality holding trivially. That gap is the plurality interval, and it is reported as information about how the mass is arranged rather than treated as an inconsistency.
 
 ![Retained mass of the original candidate under two reconstruction settings, with the support held fixed at four candidates. Candidate restriction is inactive here, so the figure isolates prior-weighted reweighting: it illustrates Proposition 3 and the separation of $T_d$ from $T_o$, not dynamic candidate loss. The upper curve crosses the one-half threshold at cycle 4 but keeps the lead until cycle 5, so $T_d = 4$ and $T_o = 5$; the lower curve crosses both at cycle 2 and ends in complete prior capture. The budget labels $W = 15$ and $W = 60$ name the two reconstruction settings and are illustrative parameter values: the mapping from a resource budget to $\beta$ is a hypothesis (Section 5.7), not a derived law. Simulated with $P = (0.10, 0.35, 0.35, 0.20)$, $S_0 = (0.94, 0.02, 0.02, 0.02)$, $\alpha = 0.8$, $k = 4$, and $\beta = 1.5$ ($W = 15$) versus $\beta = 0.3$ ($W = 60$).](figures/fig2-drift.png){width=90%}
 
