@@ -12,6 +12,10 @@ Theory paper and its companion test protocol. No empirical data.
 
 Both figures are set entirely in Latin Modern — labels, glosses, tick labels, legend and the β in Figure 2's parameter key — the same faces as the manuscript, so no figure introduces a second typeface. `figures/make_figures.py` finds those fonts through `kpsewhich`; it holds no hard-coded system font path.
 
+## Build
+
+Both PDFs rebuild byte-for-byte from a clean clone of the tag: `build.py` pins the timestamp pdfTeX writes and replaces each trailer `/ID` with a digest of the file.
+
 ## What is claimed
 
 Section 5 separates three things that a single measure conflates: which candidates a system can still represent, how much evidence survives for each, and how much reconstructed probability each receives. Two compression pathways are modelled apart — irreversible candidate removal and evidence decay below an availability threshold — and the model yields three conditional results: nested active support, finite support stabilization, and convergence of the reconstruction to a power-weighted prior restricted to the survivors. Section 5.5 attributes that convergence to Griffiths & Kalish (2007) and claims only the restriction of the limit to the surviving support, which is what makes the attractor depend on which candidates survived. Drift is three outcomes rather than two: gradual probability drift, direct representational loss, and delayed evidence-mediated loss. Section 5.8 records why the fixed-*k* truncation used in earlier drafts cannot produce the latter two: with positive retained weights it selects a support once and then does nothing.
