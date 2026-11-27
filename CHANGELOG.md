@@ -178,5 +178,35 @@ Four corrections from an external review, all of them in the released text:
 - README: S1 is described as a proposed validation protocol rather than a
   pre-registration-ready one, since its decision rules are still directional.
 
-The paper is 6,729 words (was 6,695) and S1 3,207 (was 3,162); both PDFs and both DOCX
-builds were rebuilt and every quoted count updated. Page counts remain 16 and 6.
+That pass left the paper at 6,729 words (was 6,695) and S1 at 3,207 (was 3,162); both
+PDFs and both DOCX builds were rebuilt and every quoted count updated. Page counts were
+16 and 6.
+
+### Registration pass (27 November 2026, before deposit)
+
+S1 was directional where a registration needs numbers, and its probe budget priced the
+base sampling rate rather than the adaptive rule. Both are now fixed.
+
+- Section 7: all nine predictions carry a numeric criterion. Directionality is 30 of 40
+  items with a failure line of 20; the survival claims are decided by hazard ratios with
+  95% intervals excluding 1; re-storage additionally requires at least 20% of Arm C
+  chains censored; compression necessity sets 95%, 10% and 90% tolerances across the
+  three B conditions; the Arm D pair criterion is 75% of pairs ordered and a
+  total-variation distance of 0.20 to the prior; mode sensitivity is two cycles in 60%
+  of items; the availability-order check tolerates 2% violations as coding noise and
+  otherwise reports a pipeline fault.
+- Section 7 also states how a result becomes a verdict: support, failure, or
+  indeterminate, with the count of indeterminate verdicts reported; intervals for every
+  estimate; no family-wise adjustment across nine distinct claims; and any Krippendorff
+  alpha below .80 voiding the evidence-based predictions before outcome is examined.
+- Section 9 now prices the adaptive probe rule at 28 samples per measurement, the
+  expectation at 20% of measurements in the [0.35, 0.65] band. Probe calls rise from
+  48,000 and 480,000 to 67,200 and 672,000; totals to 69,600 and 696,000; tokens to about
+  7.0M and 70M. The 10% and 30% band shares and the 60-draw ceiling are given so the
+  planning figure is revised from the minimal slice instead of assumed twice.
+- Section 9 also records that the minimal slice is not scored against these thresholds,
+  since a 75% criterion over four items is three items, and that the 40-item run is what
+  they are set for.
+
+S1 is now 7 pp, 3,943 words (was 6 pp, 3,207). The paper is unchanged at 16 pp, 6,729
+words.
