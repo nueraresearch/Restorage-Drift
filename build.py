@@ -87,10 +87,11 @@ def main():
         print(f"missing source: {MANUSCRIPT.name}", file=sys.stderr)
         return 2
 
-    # Sections 7.1 and 9 each state derived numbers in several places. Recompute them
-    # before spending a minute on figures.
+    # Sections 7.1 and 9 each state derived numbers in several places, and four files
+    # quote the word counts. Recompute all of it before spending a minute on figures.
+    # Page counts need the PDFs, so that part waits until after the build.
     step("derived numbers")
-    rc = run([sys.executable, ROOT / "check_thresholds.py"])
+    rc = run([sys.executable, ROOT / "check_thresholds.py", "--skip-pages"])
     if rc.returncode != 0:
         print("derived numbers disagree with their arithmetic - not building", file=sys.stderr)
         return rc.returncode
@@ -118,6 +119,13 @@ def main():
         fixed = normalise_id(out)
         note = "" if fixed else "  (no /ID found to normalise)"
         print(f"    -> {out.name}" + (f", {n} pages" if n else "") + note)
+
+    # With the PDFs rebuilt, the page counts every file quotes can be checked as well.
+    step("quoted counts")
+    rc = run([sys.executable, ROOT / "check_thresholds.py"])
+    if rc.returncode != 0:
+        print("a quoted count disagrees with the built document", file=sys.stderr)
+        return rc.returncode
 
     print(f"\nall builds finished in {time.time() - t0:.1f}s")
     return 0

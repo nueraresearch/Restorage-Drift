@@ -10,12 +10,17 @@ have drifted before, so build.py runs this first and refuses to make a PDF if it
 
 ROWS is the specification for 7.1: unit count, the no-effect rate, the minimum effect,
 and the two lines. alpha, beta and power are recomputed here from those four, so a
-number written into the document cannot drift from the arithmetic behind it. The cost
-constants below play the same role for 9, and the prose that states them is anchored
+number written into the document cannot drift from the arithmetic behind it. The cost constants below play the same role for 9, and the prose that states them is anchored
 too, so changing a replicate count in one place and not the other fails the check.
+
+The word and page counts are checked the same way, against README, CHANGELOG,
+RELEASE_NOTES and .zenodo.json. Pages come from the built PDFs, so build.py runs this
+once before building (with --skip-pages, since the PDFs are about to be replaced) and
+again afterwards to compare what was actually produced.
 """
 from __future__ import annotations
 
+import json
 import math
 import re
 import sys
@@ -47,6 +52,15 @@ MINIMAL_ITEMS = 4
 CODED_CYCLES = 10
 
 COST_LABELS = ("Summarization calls", "Probe calls", "Total calls", "Approximate tokens")
+
+# --- quoted counts ----------------------------------------------------------------
+PAPER_MD = ROOT / "Restorage Drift.md"
+PAPER_PDF = ROOT / "Restorage Drift.pdf"
+S1_PDF = ROOT / "Iterative-Summarization Protocol.pdf"
+LATEX_BLOCK = re.compile(r"^```\{=latex\}.*?^```", re.S | re.M)
+NUMBER_WORDS = {w: n for n, w in enumerate(
+    "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen "
+    "fifteen sixteen seventeen eighteen nineteen twenty".split())}
 
 ROWS = [
     {"key": "1", "label": "1 Directionality", "n": ITEMS, "p0": 0.25, "p1": 0.75,
@@ -262,7 +276,146 @@ def check_costs(text: str) -> list[str]:
     return out
 
 
+def word_count(path: Path) -> int:
+    """Whitespace-separated tokens once the LaTeX layout blocks are removed.
+
+    Deliberately locale-independent. GNU wc -w splits multibyte text differently under
+    LC_ALL=C: it counts 5,142 for S1 where C.UTF-8 counts 5,167, and the published
+    figures had come from the C-locale run. A quoted count should not depend on the
+    shell's locale, so this is the definition the documents are held to.
+    """
+    kept: list[str] = []
+    inside = False
+    for line in path.read_text(encoding="utf-8").splitlines(keepends=True):
+        if inside:
+            inside = "```" not in line
+            continue
+        if "```{=latex}" in line:
+            inside = True
+            continue
+        kept.append(line)
+    return len("".join(kept).split())
+
+
+def page_count(pdf: Path) -> int | None:
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        return None
+    try:
+        return len(PdfReader(str(pdf)).pages)
+    except Exception:
+        return None
+
+
+def check_quotes(include_pages: bool) -> list[str]:
+    """Compare every quoted word and page count outside the documents with the source."""
+    out: list[str] = []
+    words = {"paper": word_count(PAPER_MD), "S1": word_count(PROTOCOL)}
+    pages: dict[str, int | None] = {"paper": None, "S1": None}
+    if include_pages:
+        pages = {"paper": page_count(PAPER_PDF), "S1": page_count(S1_PDF)}
+        if None in pages.values():
+            print("    (page counts unavailable - PDFs not built or pypdf missing)")
+    else:
+        print("    (page counts skipped: the PDFs are about to be rebuilt)")
+
+    def read(name: str) -> str:
+        path = ROOT / name
+        if not path.exists():
+            out.append(f"{name}: missing")
+            return ""
+        return path.read_text(encoding="utf-8")
+
+    def figure(where: str, label: str, seen: str, want: int, unit: str) -> None:
+        try:
+            value = int(seen.replace(",", ""))
+        except ValueError:
+            out.append(f"{where}: {label} {unit} reads {seen!r}")
+            return
+        if value != want:
+            out.append(f"{where}: {label} says {value:,} {unit}, the source has {want:,}")
+
+    readme = read("README.md")
+    m = re.search(r"The theory paper, (\d+) pp, ([\d,]+) words", readme)
+    if not m:
+        out.append("README.md: the paper's \"N pp, N words\" line was not found")
+    else:
+        figure("README.md", "paper", m.group(2), words["paper"], "words")
+        if pages["paper"]:
+            figure("README.md", "paper", m.group(1), pages["paper"], "pp")
+    m = re.search(r"Current count: ([\d,]+) words", readme)
+    if not m:
+        out.append("README.md: the current word count line was not found")
+    else:
+        figure("README.md", "current count", m.group(1), words["paper"], "words")
+
+    notes = read("RELEASE_NOTES.md")
+    m = re.search(r"the theory paper, (\d+) pp, ([\d,]+) words", notes)
+    if not m:
+        out.append("RELEASE_NOTES.md: the paper line was not found")
+    else:
+        figure("RELEASE_NOTES.md", "paper", m.group(2), words["paper"], "words")
+        if pages["paper"]:
+            figure("RELEASE_NOTES.md", "paper", m.group(1), pages["paper"], "pp")
+    m = re.search(r"the test protocol, (\d+) pp", notes)
+    if not m:
+        out.append("RELEASE_NOTES.md: the S1 page line was not found")
+    elif pages["S1"]:
+        figure("RELEASE_NOTES.md", "protocol", m.group(1), pages["S1"], "pp")
+
+    raw = read(".zenodo.json")
+    try:
+        description = json.loads(raw)["description"]
+    except Exception as exc:
+        out.append(f".zenodo.json: {exc}")
+        description = ""
+    m = re.search(r"Theory paper \((\d+) pp, ([\d,]+) words\)", description)
+    if not m:
+        out.append(".zenodo.json: the description's paper figures were not found")
+    else:
+        figure(".zenodo.json", "paper", m.group(2), words["paper"], "words")
+        if pages["paper"]:
+            figure(".zenodo.json", "paper", m.group(1), pages["paper"], "pp")
+    m = re.search(r"(?:a|an) ([a-z]+)-page test protocol", description)
+    if not m:
+        out.append(".zenodo.json: the S1 page phrase was not found")
+    elif pages["S1"]:
+        spelled = NUMBER_WORDS.get(m.group(1))
+        if spelled is None:
+            out.append(f".zenodo.json: cannot read the page number {m.group(1)!r}")
+        elif spelled != pages["S1"]:
+            out.append(f".zenodo.json: says {m.group(1)}-page, the protocol has {pages['S1']} pp")
+
+    # CHANGELOG keeps history, so only its latest summary line is a current claim.
+    history = re.findall(
+        r"The paper is ([\d,]+)\s+words\s+/\s+(\d+)\s+pp[^;]*;\s*S1 is ([\d,]+)\s+words\s+/\s+(\d+)\s+pp",
+        read("CHANGELOG.md"))
+    if not history:
+        out.append("CHANGELOG.md: the current summary line was not found")
+    else:
+        wp, pp, ws, ps = history[-1]
+        figure("CHANGELOG.md", "paper", wp, words["paper"], "words")
+        figure("CHANGELOG.md", "protocol", ws, words["S1"], "words")
+        if pages["paper"]:
+            figure("CHANGELOG.md", "paper", pp, pages["paper"], "pp")
+        if pages["S1"]:
+            figure("CHANGELOG.md", "protocol", ps, pages["S1"], "pp")
+
+    for label in ("paper", "S1"):
+        shown = "" if pages[label] is None else f", {pages[label]} pp"
+        print(f"    {label:8s} {words[label]:6,d} words{shown}")
+    return out
+
+
 def main() -> int:
+    flags = {a for a in sys.argv[1:] if a.startswith("--")}
+    if "--counts" in flags:
+        for label, src, pdf in (("paper", PAPER_MD, PAPER_PDF), ("S1", PROTOCOL, S1_PDF)):
+            pages = page_count(pdf)
+            print(f"{label:6s} {word_count(src):,} words, "
+                  f"{pages if pages is not None else '?'} pp")
+        return 0
     if not PROTOCOL.exists():
         print(f"missing source: {PROTOCOL.name}")
         return 2
@@ -348,13 +501,14 @@ def main() -> int:
             problems.append(f"Section 8: expected {anchor!r}")
 
     problems.extend(check_costs(text))
+    problems.extend(check_quotes("--skip-pages" not in flags))
 
     if problems:
-        print(f"\n{len(problems)} disagreement(s) between the protocol and its arithmetic:")
+        print(f"\n{len(problems)} disagreement(s) between the documents and their numbers:")
         for p in problems:
             print(f"  - {p}")
         return 1
-    print("\nconsistent: 7.1 table, note and predictions agree; 9 cost table recomputes")
+    print("\nconsistent: 7.1 thresholds, 9 cost table and every quoted count")
     return 0
 
 

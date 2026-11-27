@@ -283,5 +283,14 @@ theory against Section 7 of the protocol.
   deliberate mutations, including a call count, a total, a band share and a coding hour,
   each stop the build.
 
-The paper is 6,848 words / 16 pp (was 6,729); S1 is 5,142 words / 9 pp (was 3,943 /
-7 pp).
+- Word and page counts are now checked too, in README, CHANGELOG, RELEASE_NOTES and
+  .zenodo.json, and doing it exposed a real error: the counts had been measured with
+  `sed ... | wc -w` under the shell's default locale, which for multibyte text does not
+  agree with a UTF-8 locale. It gave 6,848 against 6,853 for the paper and 5,142 against
+  5,167 for S1, so every quoted word count was slightly low. The canonical definition is
+  the checker's: strip the LaTeX blocks, split on Unicode whitespace, independent of
+  locale. Pages are read from the built PDFs, which is why `build.py` runs the check
+  before the build with `--skip-pages` and again after it.
+
+The paper is 6,853 words / 16 pp (was 6,848 measured under the C locale); S1 is 5,167
+words / 9 pp (was 5,142).
