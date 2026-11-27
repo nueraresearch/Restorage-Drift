@@ -36,7 +36,7 @@ What this paper claims is narrower. It separates three things that a single meas
 Two working documents are in neither this repository nor its `v1.0.0` tag:
 
 - `Human Restorage Study.*` — human-study design, v1.2. Uncited by the paper; its own header says it is not a supplement.
-- `Registration Fields Draft.md` — draft OSF preregistration fields extracted from S1. Its bracketed thresholds have not been justified; do not register as-is.
+- `Registration Fields Draft.md` — draft OSF preregistration fields, derived from S1: its error ceilings, Holm family, count lines and design figures are the protocol's own values and are re-checked against it on every build made where the file exists. Three of its values are still open — the model snapshot, the output archive, and the chain-exclusion threshold — and each is marked in the file, so it is not ready to file.
 
 ## Build
 

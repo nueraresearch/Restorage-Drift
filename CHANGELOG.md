@@ -393,4 +393,17 @@ theory against Section 7 of the protocol.
   that makes the set usable — and that the chains, probe responses and scores are
   deposited with the analysis code when the run executes.
 
+- `README.md` told readers the registration draft's bracketed thresholds "have not been
+  justified" and not to register it. Both claims had expired: the figures are S1's own and
+  are re-checked on every build made where the file exists. The bullet now says that and
+  names the three values still open — the model snapshot, the output archive and the
+  chain-exclusion threshold.
+
+- `.zenodo.json` carried no `related_identifiers`, so the record named nothing it was built
+  from. It now points at the repository tag, with `isDerivedFrom` and the source's type;
+  `check_metadata()` validates the identifier, the relation and the resource type, and
+  fails the build when the list is missing or malformed. A record cannot relate its two own
+  files to each other, so S1's status as a supplement is carried by the file list and the
+  description; the version relation to the DOI-bearing release belongs on v1.0.1.
+
 The paper is 7,002 words / 17 pp (was 6,925 / 17 pp); S1 is 6,219 words / 11 pp (was 6,061 / 10 pp).

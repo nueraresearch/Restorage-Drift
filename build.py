@@ -37,6 +37,14 @@ PUBLICATION_TYPES = {"annotationcollection", "book", "section", "conferencepaper
 ORCID_PATTERN = re.compile(r"^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$")
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
+# The relations the record may claim, and the resource types it may claim them about.
+# A record has to name the thing it was built from; without that link the deposit is a
+# loose copy, and Zenodo accepts it silently, so the check fails instead.
+RELATIONS = {"isDerivedFrom", "isSupplementTo", "isSupplementedBy", "isVersionOf",
+             "isNewVersionOf", "isPartOf", "hasPart", "references", "isReferencedBy",
+             "documents", "isDocumentedBy", "isIdenticalTo", "isSourceOf", "cites"}
+RESOURCE_TYPES = {"publication", "software", "dataset", "image", "other"}
+
 # Reproducible PDFs. pdfTeX stamps /CreationDate and /ModDate from the wall clock and
 # derives the trailer /ID partly from the time, so two builds of the same sources
 # differ. Pin the clock for the child processes (pdfTeX honours SOURCE_DATE_EPOCH),
@@ -121,6 +129,24 @@ def check_metadata():
         problems.append("publication_type is required when upload_type is 'publication'")
     if isinstance(publication, str) and publication not in PUBLICATION_TYPES:
         problems.append(f"publication_type must be one of {sorted(PUBLICATION_TYPES)}, found {publication!r}")
+
+    related = meta.get("related_identifiers")
+    if not isinstance(related, list) or not related:
+        problems.append("related_identifiers is required: the record must name the source it was built from")
+    else:
+        for i, entry in enumerate(related):
+            if not isinstance(entry, dict):
+                problems.append(f"related_identifiers[{i}] must be an object")
+                continue
+            identifier = entry.get("identifier")
+            if not isinstance(identifier, str) or not identifier.startswith(("https://", "http://")):
+                problems.append(f"related_identifiers[{i}].identifier must be an http(s) URL, found {identifier!r}")
+            relation = entry.get("relation")
+            if relation not in RELATIONS:
+                problems.append(f"related_identifiers[{i}].relation must be one of {sorted(RELATIONS)}, found {relation!r}")
+            rtype = entry.get("resource_type")
+            if rtype is not None and rtype not in RESOURCE_TYPES:
+                problems.append(f"related_identifiers[{i}].resource_type must be one of {sorted(RESOURCE_TYPES)}, found {rtype!r}")
 
     creators = meta.get("creators")
     if not isinstance(creators, list) or not creators:

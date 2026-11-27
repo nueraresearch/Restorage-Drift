@@ -15,6 +15,13 @@
   "publication_date": "2026-11-27",
   "language": "eng",
   "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/nueraresearch/Restorage-Drift/tree/v1.0.0",
+      "relation": "isDerivedFrom",
+      "resource_type": "software"
+    }
+  ],
   "keywords": [
     "reconstructive memory",
     "cultural evolution",
