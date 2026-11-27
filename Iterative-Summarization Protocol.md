@@ -26,7 +26,7 @@ Each item is a short passage containing one target detail $x^{*}$ that is improb
 
 **Prior measurement precedes the loop.** For every item, $q = 20$ reconstructions are elicited from a stripped prompt that omits the record entirely but preserves the question. The empirical distribution over the four candidates is the estimate $\hat P$ used throughout. This is not optional: every prediction in Section 7 is stated relative to $\hat P$, so a protocol that skips it can only report that something moved, not that it moved toward the prior.
 
-**Contamination screen.** An item is retained only if the stripped-prompt reconstructions recover $x^{*}$ at or near chance. Items where the model already knows the answer from training data measure recall, not reconstruction, and they are discarded before the loop begins.
+**Contamination screen.** An item is retained only if the stripped-prompt reconstructions recover $x^{*}$ no more often than chance allows. With four candidates chance is $1/4$, so $q = 20$ draws give $X \sim \mathrm{Binomial}(20, 1/4)$: an item carrying no training-data advantage yields 5 recoveries on average, with a standard deviation of 1.94. The rule is one-sided at $\alpha = .05$, and the rejection region begins where chance becomes implausible: an item is **discarded** when 9 or more of the 20 reconstructions recover $x^{*}$, which chance alone produces with probability .041, and **retained** at 8 or fewer. A count below chance is not grounds for discarding — the screen asks whether the model already knows the answer, not whether the question is easy — and the rule is fixed before any full-text run, so no item's fate is decided by looking at its chains. An extended prior sample is screened by the same test, with the tail recomputed at its own $q$. Items where the model already knows the answer from training data measure recall, not reconstruction, and they are discarded before the loop begins.
 
 ### **3.1 The item record and where the set lives**
 
@@ -39,7 +39,7 @@ Each item is a short passage containing one target detail $x^{*}$ that is improb
 | `target` | object | `text` (the span exactly as it appears in `passage`), `start` and `end` (0-based character offsets, end-exclusive), `label` |
 | `candidates` | array of four | `{label, text}` objects in the fixed order the probe presents them; exactly one is the target |
 | `probe` | string | the stripped-prompt question, as sent |
-| `ground_truth` | object | `target_label`, and `prior`: `{q, counts: [four integers], estimator}` from the prior measurement of this section |
+| `ground_truth` | object | `target_label`, `prior`: `{q, counts: [four integers], estimator}` from the prior measurement of this section, and `screen`: `{recovered, q, passes}` under the rule in this section |
 | `strata` | object | `length_tokens`, `b2_position` (`inside`, `outside`, or `na`), `fictional` (boolean), `pair_id` (null or the partner's `item_id`) |
 
 **The probe.** One item, one question, four labels, no passage. `probe` is a single user turn that states the question and lists the four candidate labels in their recorded order, without any text from `passage`. The response is parsed to one of the four labels; an answer matching none of them is recorded as `none` and kept in the denominator, never dropped. The same string is used for prior measurement and for in-loop probing, so a difference between the two measurements is a difference in what the model was shown, not in what it was asked.

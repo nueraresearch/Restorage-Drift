@@ -180,6 +180,33 @@ def cost_rows(text: str) -> dict[str, list[str]]:
     return rows
 
 
+def check_screen(text: str) -> list[str]:
+    """The contamination screen is the only exclusion rule; its arithmetic can drift too.
+
+    Four candidates, q = 20 draws, one-sided at .05: the rejection region starts at the
+    smallest count whose binomial tail falls under .05. Those three inputs produce the
+    threshold and the probability quoted in Section 3, so both are recomputed here.
+    """
+    n, p = 20, 0.25
+
+    def upper(k):
+        return sum(comb(n, i) * p**i * (1 - p) ** (n - i) for i in range(k, n + 1))
+
+    reach = min(k for k in range(1, n + 1) if upper(k) <= 0.05)   # 9 of 20, p = .041
+    tail = f"{upper(reach):.3f}"[1:]
+    out = []
+    for phrase, why in (
+        ("Binomial}(20, 1/4)", "the binomial basis"),
+        (f"{reach} or more of the {n} reconstructions", "the rejection threshold"),
+        (tail, "the probability chance alone assigns that threshold"),
+        (f"{reach - 1} or fewer", "the retention rule"),
+        ("`screen`: `{recovered, q, passes}`", "the ground_truth field"),
+    ):
+        if phrase not in text:
+            out.append(f"Section 3: the contamination screen lost {why} ({phrase!r})")
+    return out
+
+
 def check_costs(text: str) -> list[str]:
     """Recompute Section 9 from the design and compare every stated figure."""
     out: list[str] = []
@@ -500,6 +527,7 @@ def main() -> int:
         if anchor not in text:
             problems.append(f"Section 8: expected {anchor!r}")
 
+    problems.extend(check_screen(text))
     problems.extend(check_costs(text))
     problems.extend(check_quotes("--skip-pages" not in flags))
 

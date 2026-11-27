@@ -334,4 +334,12 @@ theory against Section 7 of the protocol.
   which schema validated the metadata and why the strict one is not the test applied.
   It names commits instead of saying "current", so each figure can be re-derived.
 
-The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 5,700 words / 10 pp (was 5,206 / 9 pp).
+- The contamination screen was the last unquantified exclusion rule: it kept items whose
+  stripped-prompt recoveries were "at or near chance". With four candidates and q = 20,
+  chance yields 5 of 20 on average with a standard deviation of 1.94, so Section 3 now
+  discards an item at 9 or more recoveries (chance alone: p = .041, one-sided at .05) and
+  keeps it at 8 or fewer, fixed before any full-text run; Section 3.1 records the verdict
+  in `screen`. The checker recomputes the threshold and the tail from the binomial and
+  fails the build if either drifts from the text.
+
+The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 5,854 words / 10 pp (was 5,700 / 10 pp).
