@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# LaTeX intermediates
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# Scratch renders and temp files
+.tmp_*
+figures/figures-preview.png
+figures/preview.html
+figures/make_preview.py
+
+# Tool-managed directories, never part of the project
+.freebuff/
+.cloud-attachments/
+
+# Working material held outside the archived release: no DOI covers these
+Registration Fields Draft.md
+Human Restorage Study.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
