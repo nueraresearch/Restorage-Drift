@@ -24,6 +24,7 @@ again afterwards to compare what was actually produced.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import re
@@ -519,6 +520,28 @@ def check_registration_draft() -> list[str]:
     out: list[str] = []
     masked = draft
     rows = {r["key"]: r for r in ROWS}
+
+    # DEPOSIT.md names the registered text by content, which is the only tie the record can
+    # carry to a file it does not contain. A stale digest there would be worse than none,
+    # so it is compared whenever the file is here to compare against - and only then, since
+    # a clean clone has neither the draft nor any way to verify it.
+    deposit = ROOT / "DEPOSIT.md"
+    if deposit.exists():
+        recorded = deposit.read_text(encoding="utf-8")
+        digest = hashlib.sha256(DRAFT.read_bytes()).hexdigest()
+        size = DRAFT.stat().st_size
+        found = re.search(r"\| SHA-256 \| `([0-9a-f]{64})` \|", recorded)
+        if not found:
+            out.append("DEPOSIT.md: the draft's SHA-256 is not recorded")
+        elif found.group(1) != digest:
+            out.append(f"DEPOSIT.md: records the draft as {found.group(1)[:16]}..., "
+                       f"the file hashes to {digest[:16]}...")
+        found = re.search(r"\| Bytes \| ([\d,]+) \|", recorded)
+        if not found:
+            out.append("DEPOSIT.md: the draft's byte size is not recorded")
+        elif int(found.group(1).replace(",", "")) != size:
+            out.append(f"DEPOSIT.md: records {found.group(1)} bytes for the draft, "
+                       f"the file is {size:,}")
 
     def take(label: str, pattern: str) -> list[str] | None:
         nonlocal masked

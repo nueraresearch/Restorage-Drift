@@ -70,6 +70,38 @@ At the time of the check the first two printed `0` and the third printed nothing
 from those groups was tracked, and no untracked file existed that a later commit could have
 carried in.
 
+## The registration, and what ties it to this deposit
+
+`Registration Fields Draft.md` is the file that would be pasted into an OSF pre-registration,
+and it is the one document this record deliberately does not contain. It is held outside the
+archive and outside this repository — untracked, untagged, excluded by `.gitignore` — so a
+reader cannot obtain it from the DOI. What this record can do is name it by content, so that
+"the registered text" is a byte sequence rather than a description of one:
+
+| | |
+| :---- | :---- |
+| File | `Registration Fields Draft.md` |
+| SHA-256 | `5496d2827f0499d344d70f49f9b7416de6e6a6548f578e3c16fa147116ce4ae7` |
+| Bytes | 7,303 |
+| Lines | 31 |
+| Measured at | `95c5bad`, before the deposit |
+
+Reproduce it on a machine that holds the file:
+
+```sh
+sha256sum "Registration Fields Draft.md"   # 5496d282...
+wc -c < "Registration Fields Draft.md"      # 7303
+```
+
+Those two values identify the text that matches S1 v1.0.0 — its per-row $\alpha \le .01$,
+its family of four hypotheses with Holm steps .0125 to .05, its four-item slice and its
+40-item run, and its contamination threshold of 9 of 20 at $p = .041$. A copy with a
+different digest is a different registration, whatever its filename, and the deposit cannot
+say which one was registered: the archive holds no copy to compare against. The digest is
+therefore checked where it can be — the build's draft guard hashes the file, compares it
+with this table, and fails when either value disagrees — and is a claim about a file the
+reader must obtain from the author when the file is absent.
+
 ## The metadata, and which schema settled it
 
 Two schemas disagree about `.zenodo.json`, and the disagreement is why this section exists.

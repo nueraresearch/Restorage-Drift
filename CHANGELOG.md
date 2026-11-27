@@ -369,4 +369,11 @@ theory against Section 7 of the protocol.
   claims is itself an error, which is what catches a third drift being written in rather
   than merely repeated.
 
+- `DEPOSIT.md` records the draft's SHA-256 and byte size, so the text that would be
+  registered is tied to this deposit by content even though the file is held outside the
+  archive and cannot be obtained from the DOI. The same guard hashes the file, compares
+  both values with that table, and fails when either disagrees; in a clean clone neither
+  the file nor any way to verify it is present, and the check reports the skip it already
+  reported for the rest of the draft.
+
 The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 6,061 words / 10 pp (was 5,854 / 10 pp).
