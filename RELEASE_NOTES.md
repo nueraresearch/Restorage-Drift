@@ -26,7 +26,7 @@ No empirical data, in this or any domain. No validation of the framework in huma
 
 ## Not part of this release
 
-`Human Restorage Study.*` — working design document, v1.2 — and `Registration Fields Draft.md` — unreleased draft of OSF preregistration fields. Both are withheld from the archived tree, so neither is part of the DOI record; they remain local working files, untracked and untagged. Neither is cited by the paper. The draft's figures are now derived from the protocol and re-checked against it on every build made where the file exists, but two of its values — the model snapshot and the chain-exclusion threshold — remain marked as decisions rather than settled.
+`Human Restorage Study.*` — working design document, v1.2 — and `Registration Fields Draft.md` — unreleased draft of OSF preregistration fields. Both are withheld from the archived tree, so neither is part of the DOI record; they remain local working files, untracked and untagged. Neither is cited by the paper. The draft's figures are now derived from the protocol and re-checked against it on every build made where the file exists, but three of its values — the model snapshot, the archive that will hold the run's output, and the chain-exclusion threshold — remain marked as proposals or decisions rather than settled.
 
 ## Licence
 

@@ -497,6 +497,7 @@ DRAFT_STRUCTURAL = (
     r"v\d+\.\d+\.\d+",
     r"\d+ November \d{4}",
     r"SHA-256",
+    r"UTF-8",
     r"5a|5b",
     r"Prediction \d+",
     r"items\.jsonl",

@@ -81,16 +81,16 @@ reader cannot obtain it from the DOI. What this record can do is name it by cont
 | | |
 | :---- | :---- |
 | File | `Registration Fields Draft.md` |
-| SHA-256 | `5496d2827f0499d344d70f49f9b7416de6e6a6548f578e3c16fa147116ce4ae7` |
-| Bytes | 7,303 |
-| Lines | 31 |
-| Measured at | `95c5bad`, before the deposit |
+| SHA-256 | `313091d29dff04b1a0e166783ba330445a72aa4666f6852302ef01e3a91e4c50` |
+| Bytes | 10,684 |
+| Lines | 43 |
+| Measured at | tag `v1.0.0`, before the deposit |
 
 Reproduce it on a machine that holds the file:
 
 ```sh
-sha256sum "Registration Fields Draft.md"   # 5496d282...
-wc -c < "Registration Fields Draft.md"      # 7303
+sha256sum "Registration Fields Draft.md"   # 313091d2...
+wc -c < "Registration Fields Draft.md"      # 10684
 ```
 
 Those two values identify the text that matches S1 v1.0.0 — its per-row $\alpha \le .01$,

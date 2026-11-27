@@ -376,4 +376,12 @@ theory against Section 7 of the protocol.
   the file nor any way to verify it is present, and the check reports the skip it already
   reported for the rest of the draft.
 
+- The draft gained the field S1 leaves out: where the run's output goes. Raw chains, probe
+  outputs and scores are named by file, format and release point — JSON Lines with a
+  manifest carrying each file's digest, released at the end of collection and again at
+  coding freeze — with the archive itself marked [decision], since the protocol fixes
+  where the item set lives and says nothing about anything produced from it. The draft's
+  recorded digest and byte size in `DEPOSIT.md` were updated to match, and the guard
+  compares them, so the two cannot drift apart.
+
 The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 6,061 words / 10 pp (was 5,854 / 10 pp).
