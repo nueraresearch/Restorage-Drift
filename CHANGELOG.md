@@ -10,7 +10,7 @@ Initial release. Theory paper plus Supplementary Material S1. No empirical data.
 
 ### Paper
 
-- Theory paper at 17 pp, 7,002 words, within a 7,500-word limit.
+- Theory paper at 17 pp, 7,006 words, within a 7,500-word limit.
 - Abstract, keywords, falsifiability conditions, open research questions,
   declarations, and 19 references.
 

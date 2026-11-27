@@ -8,7 +8,7 @@ rather than against a page that may have been cached.
 
 Zenodo archives a release's Git tree: the tracked files at the tag, without `.git` and
 without anything untracked or ignored. This release's tree is **21 files,
-1,803,809 bytes**:
+1,811,319 bytes**:
 
 | File | Bytes |
 | :---- | ----: |
