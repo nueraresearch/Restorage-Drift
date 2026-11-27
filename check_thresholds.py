@@ -68,9 +68,10 @@ NUMBER_WORDS = {w: n for n, w in enumerate(
     "fifteen sixteen seventeen eighteen nineteen twenty".split())}
 
 ROWS = [
-    # Prediction 1's null is the mode contest at .5, not the four-way draw at .25: a system that
-    # lost the detail still picks among four candidates, and may prefer the prior's mode for
-    # reasons the re-storage mechanism did not cause. At .5 the old 26-of-40 line sat at .040.
+    # Prediction 1's null is one half because the prediction names the two answers it contrasts -
+    # the record's assertion and the prior's preference - so a system with no re-storage effect is
+    # exchangeable between them. .25 is Prediction 5a's null, where the contest is against all four
+    # candidates and the foils are genuine possibilities. At .5 the old 26-of-40 line sat at .040.
     {"key": "1", "label": "1 Directionality", "n": ITEMS, "p0": 0.50, "p1": 0.75,
      "support": 28, "failure": 23,
      "text": ["at least 28 of 40 items", "at most 23 of 40"]},
@@ -948,6 +949,10 @@ def main() -> int:
     p1_line = next((ln for ln in text.splitlines() if ln.startswith("1. **Directionality.**")), "")
     if "The no-effect rate is one half" not in p1_line:
         problems.append("prediction 1: the no-effect rate is not stated as one half")
+    if "two named answers" not in p1_line:
+        problems.append("prediction 1: the null no longer names the two answers it contrasts")
+    if "Prediction 5a" not in p1_line:
+        problems.append("prediction 1: the null no longer says which prediction owns one quarter")
     inline = re.findall(r"\\alpha = ([0-9.]+) \\times 10\^\{(-?\d+)\}", p1_line)
     if len(inline) != 1:
         problems.append(f"prediction 1: expected one inline alpha, found {len(inline)}")
@@ -983,6 +988,21 @@ def main() -> int:
                 if got <= 0 or abs(math.log10(want / got)) > ALPHA_QUOTE_TOLERANCE:
                     problems.append(f"7.1: the alpha for {k} of 40 reads {got:.3g}, "
                                     f"computes {want:.3g}")
+        # The rate is an argument, not an assertion: the paragraph must still say why the two
+        # named answers are exchangeable and why one quarter is 5a's null rather than this one.
+        for anchor in ("equal footing", "Prediction 5a"):
+            if anchor not in para:
+                problems.append(f"7.1: the correction paragraph no longer gives {anchor!r}")
+
+    # 6c. the paragraph that rules out the strict null, which is the other candidate rate.
+    strict = next((ln for ln in text.splitlines()
+                   if ln.startswith("**Why one half, and not zero.**")), "")
+    if not strict:
+        problems.append("7.1: the paragraph rejecting a zero no-effect rate is missing")
+    else:
+        for anchor in ("least favourable", "Arm B1", "proxy"):
+            if anchor not in strict:
+                problems.append(f"7.1: the zero-rate paragraph no longer gives {anchor!r}")
 
     # 7. the design facts the unit counts rest on
     for anchor in ("three replicates per item and arm-cell",

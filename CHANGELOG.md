@@ -486,4 +486,40 @@ theory against Section 7 of the protocol.
   release, which is what mints the DOI, remains the author's step; this entry records the
   re-cut so a reader can tell the released tree from the commits that preceded it.
 
-The paper is 7,006 words / 17 pp (was 6,925 / 17 pp); S1 is 6,655 words / 11 pp (was 6,061 / 10 pp).
+### The Prediction 1 null, argued (27 November 2026, before deposit)
+
+- Prediction 1's no-effect rate was one half by assertion. The text said that a system that had
+  lost the detail "still chooses among four candidates" and therefore that the null is a contest
+  between the prior's mode and the target, which names the four-way floor as the rejected
+  alternative without saying why one half follows. Section 7 and Section 7.1 now carry the
+  argument. The prediction names the two answers it contrasts — x*, which the record asserts,
+  and the prior's mode, which the model prefers when the record is absent — so
+  the contest is between two named candidates and not four. The foils are not third and fourth
+  contenders: they are constructed to be implausible attractors, and an item answered with one
+  is scored against support rather than dropped, so a foil reduces the count instead of
+  splitting it. Under a null that puts the two contenders on equal footing the per-item rate is
+  one half, and no admissible null puts it higher. One quarter asserts what the construction
+  rules deny — that the foils are as probable as either attractor — and belongs to Prediction
+  5a, where the mode contest really is against all four.
+
+- The strict null is the other candidate rate, and it is now rejected explicitly rather than
+  passed over: if the record were intact the probe would return x* and the rate would be near
+  zero, but the probe is a proxy for the state (Section 6) and its error rate is not
+  bounded in advance, so at zero a single stray answer would count as evidence of drift. One
+  half is therefore the least favourable rate the design can defend, which makes the 28-of-40
+  threshold conservative and every quoted power a lower bound, and Arm B1 measures the rate
+  rather than assuming it.
+
+- The checker now anchors the argument and not only the arithmetic. The Prediction 1 line must
+  still name the two answers it contrasts and say which prediction owns one quarter; the 7.1
+  correction paragraph must still say "one half", give both count lines, recompute both inline
+  alphas at the .5 null, and keep the equal-footing argument and the contrast with Prediction
+  5a; and a separate check holds the paragraph that rejects a zero rate, which must still name
+  the least favourable null, Arm B1 and the probe proxy.
+
+- The argument costs S1 a page: it is 7,009 words in 12 pp, where the tag message quoted 6,655
+  words in eleven. `v1.0.0` was re-cut once more so the annotated message, this summary line,
+  `RELEASE_NOTES.md`, the `.zenodo.json` description and the deposit inventory all carry the
+  figures the rebuilt PDFs produce.
+
+The paper is 7,006 words / 17 pp (was 6,925 / 17 pp); S1 is 7,009 words / 12 pp (was 6,061 / 10 pp).
