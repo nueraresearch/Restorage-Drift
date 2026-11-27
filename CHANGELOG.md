@@ -257,6 +257,11 @@ theory against Section 7 of the protocol.
   so the prediction's error rate is no larger than either and nothing is adjusted
   between them; a split verdict is reported as indeterminate rather than as partial
   support.
+- The note under that table claimed alpha never exceeds .008, which Prediction 7's
+  .0083 line contradicts. The bound is corrected and the note now carries every row's
+  alpha and beta (1: 1e-7 and .005; 5a: 3e-5 and .0039; 5b: 8.8e-4 and .0039; 7: .0083
+  and .001; 9: below 1e-40 and 1e-15), so a reader can still check each error rate now
+  that those two columns are gone.
 
-The paper is 6,848 words / 16 pp (was 6,729); S1 is 5,090 words / 9 pp (was 3,943 /
+The paper is 6,848 words / 16 pp (was 6,729); S1 is 5,140 words / 9 pp (was 3,943 /
 7 pp).
