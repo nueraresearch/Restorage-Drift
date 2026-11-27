@@ -180,6 +180,39 @@ def cost_rows(text: str) -> dict[str, list[str]]:
     return rows
 
 
+def check_multiplicity(text: str) -> list[str]:
+    """Holm over the four confirmatory hypotheses: the step thresholds are arithmetic.
+
+    Four hypotheses at a family-wise .05 give steps .0125, .0167, .025 and .05. All four
+    are derived here, so a hand-edited step, a family that silently gains a member, or a
+    table that forgets the correction cannot pass.
+    """
+    fwer, members = 0.05, 4
+    steps = [f"{fwer / (members - i):.4f}"[1:].rstrip("0").rstrip(".") for i in range(members)]
+    out = []
+
+    # Scope to the rule's own paragraph: a step quoted anywhere else in the protocol is not
+    # the correction, and a wrong step must not be masked by a coincidental match.
+    start = text.find("**Multiplicity.**")
+    rule = text[start:text.find("\n\n", start)] if start != -1 else ""
+    if not rule:
+        return ["Section 7: the multiplicity paragraph is missing"]
+    for step in steps:
+        if step not in rule:
+            out.append(f"Section 7: the Holm step {step} is missing from the multiplicity rule")
+    for phrase, why in (
+        ("one family of four hypotheses", "the family's composition"),
+        ("intersection-union", "why 5a and 5b count once"),
+    ):
+        if phrase not in rule:
+            out.append(f"Section 7: the multiplicity statement lost {why}")
+    # The claim that the table is conservative lives in 7.1, and must keep that form: the
+    # phrase "lower bound" alone also occurs about a count line and would mask its removal.
+    if "every power in the table is a lower bound" not in text:
+        out.append("Section 7.1: the statement that the table's powers are lower bounds is missing")
+    return out
+
+
 def check_screen(text: str) -> list[str]:
     """The contamination screen is the only exclusion rule; its arithmetic can drift too.
 
@@ -527,6 +560,7 @@ def main() -> int:
         if anchor not in text:
             problems.append(f"Section 8: expected {anchor!r}")
 
+    problems.extend(check_multiplicity(text))
     problems.extend(check_screen(text))
     problems.extend(check_costs(text))
     problems.extend(check_quotes("--skip-pages" not in flags))

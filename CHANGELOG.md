@@ -342,4 +342,13 @@ theory against Section 7 of the protocol.
   in `screen`. The checker recomputes the threshold and the tail from the binomial and
   fails the build if either drifts from the text.
 
-The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 5,854 words / 10 pp (was 5,700 / 10 pp).
+- Section 7 said only that the nine predictions are distinct claims and were not
+  adjusted, while the predictions carry five count-based rules at .01: nine directional
+  claims leave the family-wise error near .09. The five rules are now one family of four
+  hypotheses (5a and 5b joined by intersection-union), Holm-Bonferroni at .05 with steps
+  .0125, .0167, .025 and .05; 2, 3 and 6 stay interval estimates and 4 and 8 tolerance
+  lines, outside the family. Because .01 is stricter than the first step, every power in
+  the table is a lower bound, and 7.1 now says so. The checker derives the four steps and
+  fails the build if the rule, its family size or that bound claim goes missing.
+
+The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 6,061 words / 10 pp (was 5,854 / 10 pp).
