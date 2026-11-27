@@ -224,9 +224,15 @@ theory against Section 7 of the protocol.
   failure at beta <= .10, and power reported. Prediction 1 becomes 26 of 40 against
   22 of 40 (alpha 1e-7, beta .005, power .95 at a .75 effect). Prediction 7 becomes 28
   of 40 against 23 of 40, its no-effect rate being one half (alpha .008, power .96 at
-  .80). Prediction 9 becomes 280 of 400 against 240 of 400 against .27 (power >= .99).
-  Prediction 5, which has only 20 pairs to work with, becomes 14 of 20 against 9 of 20
-  (power .79), and the table names it as the least powered claim.
+  .80). Prediction 9 becomes 90 of 120 against 84 of 120 (power .93). Prediction 5,
+  which has only 20 pairs to work with, becomes 14 of 20 against 9 of 20 (power .79),
+  and the table names it as the least powered claim.
+- Prediction 9's chain count was wrong in that table. Section 8 codes three replicates
+  per item and cell, so Arm A at W = 15 yields 120 coded chains rather than the 400 the
+  arm runs, and a support line at 280 of 400 could not be reached by any outcome of the
+  coded subsample. The line is re-derived at 120 by the same method, Section 7.1 states
+  the coded count beside the row, and Section 8 states the subsample size: 120 chains
+  per arm-cell, 720 in total.
 - Prediction 5 required terminals within total-variation distance 0.20 of the prior.
   Proposition 3's limit is the tempered prior, and at the theory's own illustrative
   settings that distance is 0.29, so the criterion was unsatisfiable by construction.
@@ -240,5 +246,5 @@ theory against Section 7 of the protocol.
 - Section 9 no longer says the thresholds come from no power calculation. The survival
   claims are the ones without one, and Section 9 says why.
 
-The paper is 6,848 words / 16 pp (was 6,729); S1 is 4,658 words / 8 pp (was 3,943 /
+The paper is 6,848 words / 16 pp (was 6,729); S1 is 4,803 words / 9 pp (was 3,943 /
 7 pp).
