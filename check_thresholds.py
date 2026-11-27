@@ -508,7 +508,7 @@ DRAFT_STRUCTURAL = (
     r"UTF-8",
     r"5a|5b",
     r"Prediction \d+",
-    r"items\.jsonl",
+    r"items\.[a-z]+\.jsonl",
     r"\bS1\b",
 )
 
@@ -792,6 +792,74 @@ def check_registration_draft() -> list[str]:
     return out
 
 
+# --- the item set's name ----------------------------------------------------------------
+# S1 promised one file called `items.jsonl` while the pack holds `items.pilot.jsonl` and
+# `items.real.jsonl`, each with a manifest, so the promise named a file no reader could
+# find. The documents now use the pack's own per-set names, and this holds them to it: to
+# each other in a clean clone, and to the files on disk where the pack is present.
+PACK = ROOT / "registration-pack" / "pilot"
+PACK_SETS = ("items.pilot.jsonl", "items.real.jsonl")
+
+
+def check_item_set_names() -> list[str]:
+    """The documents must name the same item files, and the pack must hold them.
+
+    The item text is outside the archive by design, so a clean clone has no pack to check
+    against; what it can check is that the protocol, the paper and the registration draft
+    agree on the names, which is the disagreement that produced the stale promise. Where
+    the pack is here, its files, their manifests and the digests those manifests record
+    are held to the names the documents use, as the draft's own digest already is.
+    """
+    out: list[str] = []
+    named: dict[str, set[str]] = {}
+    for label, path in (("S1", PROTOCOL), ("paper", PAPER_MD), ("draft", DRAFT)):
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        found = set(re.findall(r"`(items\.[a-z]+\.jsonl)`", text))
+        if not found:
+            out.append(f"{label}: names no item-set file")
+        if re.search(r"\bitems\.jsonl\b", text):
+            out.append(f"{label}: names a bare `items.jsonl`, which the pack does not hold")
+        named[label] = found
+
+    reference = named.get("S1") or set(PACK_SETS)
+    for label, found in named.items():
+        for missing in sorted(reference - found):
+            out.append(f"{label}: does not name {missing}")
+        for extra in sorted(found - reference):
+            out.append(f"{label}: names {extra}, which the protocol does not")
+
+    if not PACK.exists():
+        print("    (registration pack absent - item-set names compared across documents)")
+        return out
+    for name in sorted(set().union(*named.values()) if named else set(reference)):
+        path = PACK / name
+        if not path.exists():
+            out.append(f"registration pack: {name} is named but not on disk")
+            continue
+        manifest = path.with_name(name.replace(".jsonl", ".manifest.json"))
+        if not manifest.exists():
+            out.append(f"registration pack: {name} has no manifest beside it")
+            continue
+        recorded = manifest.read_text(encoding="utf-8")
+        m = re.search(r'"sha256": "([0-9a-f]{64})"', recorded)
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if not m:
+            out.append(f"registration pack: {manifest.name} records no digest")
+        elif m.group(1) != digest:
+            out.append(f"registration pack: {manifest.name} records {m.group(1)[:16]}..., "
+                       f"{name} hashes to {digest[:16]}...")
+        m = re.search(r'"bytes": (\d+)', recorded)
+        size = path.stat().st_size
+        if not m:
+            out.append(f"registration pack: {manifest.name} records no byte count")
+        elif int(m.group(1)) != size:
+            out.append(f"registration pack: {manifest.name} records {m.group(1)} bytes, "
+                       f"{name} is {size:,}")
+    return out
+
+
 def main() -> int:
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
     if "--counts" in flags:
@@ -927,6 +995,7 @@ def main() -> int:
     problems.extend(check_costs(text))
     problems.extend(check_no_control_characters())
     problems.extend(check_registration_draft())
+    problems.extend(check_item_set_names())
     problems.extend(check_quotes("--skip-pages" not in flags))
 
     if problems:

@@ -15,25 +15,25 @@ without anything untracked or ignored. This release's tree is **21 files,
 | `.gitattributes` | 114 |
 | `.gitignore` | 455 |
 | `.zenodo.json` | 2,223 |
-| `CHANGELOG.md` | 30,512 |
+| `CHANGELOG.md` | 32,682 |
 | `DEPOSIT.md` | 6,295 |
-| `Iterative-Summarization Protocol.docx` | 29,660 |
-| `Iterative-Summarization Protocol.md` | 39,009 |
-| `Iterative-Summarization Protocol.pdf` | 267,272 |
+| `Iterative-Summarization Protocol.docx` | 29,807 |
+| `Iterative-Summarization Protocol.md` | 39,375 |
+| `Iterative-Summarization Protocol.pdf` | 267,704 |
 | `LICENSE` | 3,009 |
 | `README.md` | 6,453 |
 | `RELEASE_NOTES.md` | 3,132 |
-| `Restorage Drift.docx` | 321,192 |
-| `Restorage Drift.md` | 50,028 |
-| `Restorage Drift.pdf` | 663,613 |
+| `Restorage Drift.docx` | 321,217 |
+| `Restorage Drift.md` | 50,068 |
+| `Restorage Drift.pdf` | 664,459 |
 | `build.py` | 10,922 |
-| `check_thresholds.py` | 44,595 |
+| `check_thresholds.py` | 48,079 |
 | `fig-header.tex` | 200 |
 | `figures/fig1-cycle.png` | 115,158 |
 | `figures/fig2-drift.png` | 189,954 |
 | `figures/make_figures.py` | 12,184 |
 | `make_docx.py` | 7,829 |
-| **Total** | **1,803,809** |
+| **Total** | **1,811,319** |
 
 Reproduce the count and the total:
 
@@ -78,16 +78,16 @@ reader cannot obtain it from the DOI. What this record can do is name it by cont
 | | |
 | :---- | :---- |
 | File | `Registration Fields Draft.md` |
-| SHA-256 | `2326ff6aac2251c27622f4d67dcfdaedf2233fbe965625b3a566e8f1321367a8` |
-| Bytes | 10,775 |
+| SHA-256 | `73430eeb0fecda94428adb63463cbf3d5df5267f5bbd427e7c65176ed5b6ba54` |
+| Bytes | 10,809 |
 | Lines | 43 |
 | Measured at | tag `v1.0.0`, before the deposit |
 
 Reproduce it on a machine that holds the file:
 
 ```sh
-sha256sum "Registration Fields Draft.md"   # 2326ff6a...
-wc -c < "Registration Fields Draft.md"      # 10775
+sha256sum "Registration Fields Draft.md"   # 73430eeb...
+wc -c < "Registration Fields Draft.md"      # 10809
 ```
 
 Those two values identify the text that matches S1 v1.0.0 — its per-row $\alpha \le .01$,

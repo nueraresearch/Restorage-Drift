@@ -439,4 +439,34 @@ theory against Section 7 of the protocol.
   `DEPOSIT.md`'s reproduce block to the draft it prints, not just the table above it,
   where the two had drifted apart.
 
-The paper is 7,002 words / 17 pp (was 6,925 / 17 pp); S1 is 6,601 words / 11 pp (was 6,061 / 10 pp).
+### Item-set naming (27 November 2026, before deposit)
+
+- S1 Section 3.1 and Section 11 promised the item set as one file named `items.jsonl`, and
+  the paper's data-availability paragraph repeated it, but the registration pack holds two
+  construction sets: `items.pilot.jsonl` (eight fictional items) and `items.real.jsonl`
+  (eight real-world ones), each with a manifest carrying its SHA-256, byte size and record
+  count. Those are the names its own builder writes and its construction standard
+  describes; the single fixed name was the outlier, and it was a promise the pack could
+  not keep. Renaming one file to `items.jsonl` would have dropped a stratum, and merging
+  two unmeasured sets would have registered one digest over text that was never screened,
+  so the documents moved instead: S1, the paper and the registration draft now name the
+  sets the pack holds, in the pack's own per-set convention, and the registration records
+  the digest of each set it registers rather than of a file that does not exist.
+
+- Nothing about the promise's substance changed. The item text is still absent from this
+  repository and from the archive, still identified by digest, and still released at first
+  analysis, for the reason Section 3 gives: item text beside the theory would enter the
+  training data of any model that later reads it, which is the contamination the screen
+  exists to detect. `DEPOSIT.md` records the registration draft by content, so its digest,
+  byte count and line count moved with the draft.
+
+- `check_thresholds.py` now holds the names together, because a name repeated in three
+  documents is exactly the kind of claim that drifts. It fails the build when the
+  protocol, the paper or the draft names no item-set file, when one of them still says
+  `items.jsonl`, or when they name different sets; where the pack is present it also
+  requires each named file and its manifest on disk, and each manifest's digest and byte
+  count to match the file beside it. A rebuilt or renamed set is therefore a build error
+  rather than a stale sentence in the protocol. The guard skips the pack on a clean
+  clone, as the draft guard already does.
+
+The paper is 7,006 words / 17 pp (was 6,925 / 17 pp); S1 is 6,655 words / 11 pp (was 6,061 / 10 pp).

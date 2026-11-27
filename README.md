@@ -22,7 +22,7 @@ What this paper claims is narrower. It separates three things that a single meas
 
 | File | What it is |
 |---|---|
-| `Restorage Drift.md` `.pdf` `.docx` | The theory paper, 17 pp, 7,002 words |
+| `Restorage Drift.md` `.pdf` `.docx` | The theory paper, 17 pp, 7,006 words |
 | `Iterative-Summarization Protocol.md` `.pdf` `.docx` | Supplementary Material S1: the proposed validation protocol |
 | `build.py` | Rebuilds the paper and S1 PDFs |
 | `make_docx.py` | Rebuilds the `.docx` files with fixed table geometry |
@@ -63,7 +63,7 @@ Word count, with the LaTeX layout blocks stripped and the result split on Unicod
 python check_thresholds.py --counts
 ```
 
-The definition is locale-independent on purpose. GNU `wc -w` gives 5,142 for S1 under `LC_ALL=C` and 5,167 under `C.UTF-8`, so the pipeline this file used to recommend undercounted both documents by however the shell was configured. Current count: 7,002 words, against a 7,500-word journal limit.
+The definition is locale-independent on purpose. GNU `wc -w` gives 5,142 for S1 under `LC_ALL=C` and 5,167 under `C.UTF-8`, so the pipeline this file used to recommend undercounted both documents by however the shell was configured. Current count: 7,006 words, against a 7,500-word journal limit.
 
 ## How the framework could fail
 

@@ -30,7 +30,7 @@ Each item is a short passage containing one target detail $x^{*}$ that is improb
 
 ### **3.1 The item record and where the set lives**
 
-**Format.** The set is one UTF-8 JSON Lines file, `items.jsonl`, one record per line, keys sorted, no blank lines. Every record carries all of the fields below; a record missing one is invalid rather than defaulted, so the file either matches this schema exactly or fails validation before the loop starts.
+**Format.** The item set is one UTF-8 JSON Lines file, one record per line, keys sorted, no blank lines, and the file takes the name of the set it holds: the real-world set is `items.real.jsonl` and the fictional set is `items.pilot.jsonl`, each with a manifest recording its SHA-256, byte size and record count. Every record carries all of the fields below; a record missing one is invalid rather than defaulted, so the file either matches this schema exactly or fails validation before the loop starts.
 
 | Field | Type | Contents |
 | :---- | :---- | :---- |
@@ -46,7 +46,7 @@ Each item is a short passage containing one target detail $x^{*}$ that is improb
 
 **Ground truth is mechanical.** An item's ground truth is its target label together with the target's character span, both fixed at construction and checked by script against `passage`. Nothing is left to a rater's judgement of whether a reconstruction preserves $x^{*}$: $m_n$ is the count of the target label among the $q$ probe responses, and the contamination screen is that same count on the stripped prompt. A response is evidence about the four candidates and nothing else.
 
-**Where the set lives.** The item text is not printed here and is not in this repository. The set is the single file `items.jsonl` in the registration pack that accompanies the preregistration, and the registration records its SHA-256 digest, so "the item set" names one byte sequence rather than a description of one. It is released when the first chain is analysed. Publishing it beside the theory would place the item text in the training data of any model that later reads the repository, which is exactly the contamination the screen above is meant to detect; keeping it in the registration is what keeps that screen meaningful.
+**Where the set lives.** The item text is not printed here and is not in this repository. Each set is a single file in the registration pack that accompanies the preregistration—`items.real.jsonl` and `items.pilot.jsonl`, the manifests beside them carrying each digest, byte size and record count—and the registration records the SHA-256 digest of the set it registers, so "the item set" names one byte sequence rather than a description of one. It is released when the first chain is analysed. Publishing it beside the theory would place the item text in the training data of any model that later reads the repository, which is exactly the contamination the screen above is meant to detect; keeping it in the registration is what keeps that screen meaningful.
 
 ## **4\. Arms**
 
@@ -190,6 +190,6 @@ The count-based thresholds carry their own power, tabulated in Section 7.1; the 
 
 ## **11\. Data availability**
 
-No data were collected for this protocol, and none are reported here. Its items exist, and they are the one exception to the rule above: `items.jsonl` travels in the registration pack that accompanies the preregistration, is identified by the SHA-256 digest recorded there, and is released when the first chain is analysed (Section 3.1). It is deliberately not in the repository that carries the theory and this protocol, because item text published beside them enters the training data of any model that later reads the repository — which is the contamination the screen of Section 3 exists to detect, so publishing the set there would defeat the screen that justifies using it.
+No data were collected for this protocol, and none are reported here. Its items exist, and they are the one exception to the rule above: `items.real.jsonl` and `items.pilot.jsonl` travel in the registration pack that accompanies the preregistration, each identified by the SHA-256 digest its manifest records, and are released when the first chain is analysed (Section 3.1). It is deliberately not in the repository that carries the theory and this protocol, because item text published beside them enters the training data of any model that later reads the repository — which is the contamination the screen of Section 3 exists to detect, so publishing the set there would defeat the screen that justifies using it.
 
 Nothing else exists yet. The chains, probe responses and scores described in Sections 6 to 8 are produced by the run; they are deposited, in the classes and at the points the registration fixes, together with the analysis code, when it executes.
