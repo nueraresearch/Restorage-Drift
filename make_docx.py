@@ -9,9 +9,13 @@ tables wrap into narrow strips and print as bare columns in Word. This script
 converts the markdown, then sets a per-table column profile, fixes the table
 layout, and draws horizontal rules only (booktabs style) to match the PDFs.
 """
+import datetime
+import os
+import re
 import shutil
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 from docx import Document
@@ -25,6 +29,15 @@ DOCS = [
     "Restorage Drift",
     "Iterative-Summarization Protocol",
 ]
+
+# Reproducible .docx. Pandoc stamps docProps/core.xml with the wall clock and
+# python-docx rewrites the package with time.localtime() on every part, so two
+# builds of the same markdown differ. Both are pinned to the same instant build.py
+# uses for the PDFs, which makes a clean clone reproduce the file byte for byte.
+EPOCH = 1795737600              # 2026-11-27T00:00:00Z
+STAMP = (2026, 11, 27, 0, 0, 0)  # the same instant, as a zip date_time tuple
+W3CDTF = b"2026-11-27T00:00:00Z"
+CORE_DATE = re.compile(rb"(<dcterms:(?:created|modified)[^>]*>)[^<]*(</dcterms:(?:created|modified)>)")
 
 # 6.5 in of text on Letter at 1 in margins, in twips.
 TEXT_WIDTH = 9360
@@ -120,6 +133,33 @@ def frame(tbl, widths):
                        "w:tcFitText", "w:vAlign", "w:hideMark"))
 
 
+def pin_package(path):
+    """Rewrite the .docx package with fixed dates, in place.
+
+    Every part keeps its bytes, order and compression; only the zip timestamp, the
+    creating system and the core.xml W3CDTF dates change. Sizes are untouched, so
+    the archive is a valid package and opens exactly as before.
+    """
+    with zipfile.ZipFile(path) as z:
+        parts = [(i.filename, z.read(i.filename), i.compress_type) for i in z.infolist()]
+
+    pinned = []
+    for name, data, ctype in parts:
+        if name == "docProps/core.xml":
+            data = CORE_DATE.sub(lambda m: m.group(1) + W3CDTF + m.group(2), data)
+        pinned.append((name, data, ctype))
+
+    tmp = path.with_name(path.name + ".tmp")
+    with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as z:
+        for name, data, ctype in pinned:
+            info = zipfile.ZipInfo(name, date_time=STAMP)
+            info.compress_type = ctype
+            info.create_system = 0          # MS-DOS, so external_attr means the same everywhere
+            info.external_attr = 0o600 << 16
+            z.writestr(info, data)
+    os.replace(tmp, path)
+
+
 def profile_for(tbl):
     header = " ".join(c.text.strip().lower() for c in tbl.rows[0].cells)
     ncols = len(tbl.columns)
@@ -136,6 +176,9 @@ def main():
     if not pandoc:
         print("pandoc not found on PATH", file=sys.stderr)
         return 2
+
+    os.environ.setdefault("SOURCE_DATE_EPOCH", str(EPOCH))
+    print(f"    SOURCE_DATE_EPOCH={os.environ['SOURCE_DATE_EPOCH']}")
 
     wanted = sys.argv[1:] or DOCS
     for name in wanted:
@@ -156,7 +199,8 @@ def main():
             print(f"    table {i}: {len(tbl.columns)} cols, "
                   f"{[round(w / 1440, 2) for w in widths]} in  [{why}]")
         doc.save(str(dst))
-        print(f"    -> {dst.name}, {len(doc.tables)} table(s) fixed")
+        pin_package(dst)
+        print(f"    -> {dst.name}, {len(doc.tables)} table(s) fixed, timestamps pinned")
     return 0
 
 

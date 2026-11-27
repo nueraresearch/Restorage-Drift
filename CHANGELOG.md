@@ -142,11 +142,14 @@ work, not the state of the release: the figure was rendered and inspected at pri
 resolution before deposit, and no change to the artwork followed. Removing the bullet
 changes only this record, not the paper, the figures or the build.
 
-`build.py` now pins `SOURCE_DATE_EPOCH` for the PDF step and replaces each trailer
-`/ID` with a digest of the finished file, so a clean clone of the tag rebuilds both PDFs
-byte-for-byte. Both PDFs were regenerated for this reason: text, pagination and figures
-are unchanged, and the only bytes that differ from the first published files are the
-embedded dates and the `/ID`.
+The build is now reproducible. `build.py` pins `SOURCE_DATE_EPOCH` for the PDF step and
+replaces each trailer `/ID` with a digest of the finished file; `make_docx.py` pins the
+W3CDTF dates in `docProps/core.xml` and the timestamp on every zip entry. A clean clone
+of the tag therefore rebuilds both PDFs and both DOCX companions byte-for-byte. All four
+files were regenerated for this reason: their content is unchanged — identical extracted
+text, identical `document.xml`, same page and table counts — and the only bytes that
+differ from the first published files are the embedded dates, the `/ID` and the zip
+timestamps.
 
 The paper is 6,695 words (was 6,692) and S1 3,162 (was 3,142); both PDFs and DOCX
 builds were regenerated, and the word count was updated wherever it was quoted. Page
