@@ -7,8 +7,8 @@ rather than against a page that may have been cached.
 ## The source archive
 
 Zenodo archives a release's Git tree: the tracked files at the tag, without `.git` and
-without anything untracked or ignored. This release's tree is **21 files,
-1,822,138 bytes**:
+without anything untracked or ignored. This release's tree is **22 files,
+1,831,579 bytes**:
 
 | File | Bytes |
 | :---- | ----: |
@@ -16,7 +16,7 @@ without anything untracked or ignored. This release's tree is **21 files,
 | `.gitignore` | 455 |
 | `.zenodo.json` | 2,222 |
 | `CHANGELOG.md` | 36,552 |
-| `DEPOSIT.md` | 6,295 |
+| `DEPOSIT.md` | 6,333 |
 | `Iterative-Summarization Protocol.docx` | 30,822 |
 | `Iterative-Summarization Protocol.md` | 41,385 |
 | `Iterative-Summarization Protocol.pdf` | 270,337 |
@@ -27,13 +27,14 @@ without anything untracked or ignored. This release's tree is **21 files,
 | `Restorage Drift.md` | 50,068 |
 | `Restorage Drift.pdf` | 664,459 |
 | `build.py` | 10,922 |
-| `check_thresholds.py` | 49,371 |
+| `check_thresholds.py` | 52,536 |
 | `fig-header.tex` | 200 |
 | `figures/fig1-cycle.png` | 115,158 |
 | `figures/fig2-drift.png` | 189,954 |
 | `figures/make_figures.py` | 12,184 |
 | `make_docx.py` | 7,829 |
-| **Total** | **1,822,138** |
+| `tests/mutation_check.py` | 6,238 |
+| **Total** | **1,831,579** |
 
 Reproduce the count and the total:
 

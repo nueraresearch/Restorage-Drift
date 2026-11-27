@@ -28,6 +28,7 @@ import hashlib
 import json
 import math
 import re
+import subprocess
 import sys
 from math import comb
 from pathlib import Path
@@ -793,6 +794,69 @@ def check_registration_draft() -> list[str]:
     return out
 
 
+# --- the deposit inventory ---------------------------------------------------------------
+# DEPOSIT.md's table is the only place in the record that claims what the archive contains,
+# and it was verified by hand on every release pass. The table describes the *tagged* tree,
+# not the working tree: on main after a release it should keep describing the tag, so the
+# comparison is against the ref its own reproduce block names.
+DEPOSIT_DOC = ROOT / "DEPOSIT.md"
+
+
+def check_deposit_inventory() -> list[str]:
+    """The inventory table, its total row and the sentence above it must match the tag."""
+    if not DEPOSIT_DOC.exists():
+        print("    (no DEPOSIT.md - inventory not checked)")
+        return []
+    text = DEPOSIT_DOC.read_text(encoding="utf-8")
+    m = re.search(r"git ls-tree -r --long (\S+)", text)
+    ref = m.group(1) if m else "v1.0.0"
+    if subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=ROOT,
+                      capture_output=True).returncode != 0:
+        print("    (not a git checkout - inventory not checked against a tag)")
+        return []
+    listing = subprocess.run(["git", "ls-tree", "-r", "--long", ref], cwd=ROOT,
+                             capture_output=True, text=True)
+    if listing.returncode != 0:
+        print(f"    ({ref} is not in this clone - inventory not checked)")
+        return []
+
+    tree: dict[str, int] = {}
+    for line in listing.stdout.splitlines():
+        meta, path = line.split("\t", 1)
+        tree[path] = int(meta.split()[3])
+    rows = {m.group(1): int(m.group(2).replace(",", ""))
+            for m in re.finditer(r"^\| `([^`]+)` \| ([\d,]+) \|$", text, re.M)}
+
+    out: list[str] = []
+    if not rows:
+        return ["DEPOSIT.md: the inventory table was not found"]
+    for path in sorted(set(rows) | set(tree)):
+        if path not in tree:
+            out.append(f"DEPOSIT.md: lists {path}, which {ref} does not contain")
+        elif path not in rows:
+            out.append(f"DEPOSIT.md: does not list {path}, which {ref} contains")
+        elif rows[path] != tree[path]:
+            out.append(f"DEPOSIT.md: {path} reads {rows[path]:,} bytes, "
+                       f"{ref} has {tree[path]:,}")
+    total = sum(tree.values())
+    m = re.search(r"\| \*\*Total\*\* \| \*\*([\d,]+)\*\*", text)
+    if not m:
+        out.append("DEPOSIT.md: the total row was not found")
+    elif int(m.group(1).replace(",", "")) != total:
+        out.append(f"DEPOSIT.md: total row reads {m.group(1)} bytes, {ref} totals {total:,}")
+    m = re.search(r"\*\*(\d+) files,\s*\n?([\d,]+) bytes\*\*", text)
+    if not m:
+        out.append("DEPOSIT.md: the sentence above the table was not found")
+    else:
+        if int(m.group(1)) != len(tree):
+            out.append(f"DEPOSIT.md: the sentence reads {m.group(1)} files, {ref} has {len(tree)}")
+        if int(m.group(2).replace(",", "")) != total:
+            out.append(f"DEPOSIT.md: the sentence reads {m.group(2)} bytes, {ref} totals {total:,}")
+    if not out:
+        print(f"    deposit inventory: {len(tree)} files, {total:,} bytes match {ref}")
+    return out
+
+
 # --- the item set's name ----------------------------------------------------------------
 # S1 promised one file called `items.jsonl` while the pack holds `items.pilot.jsonl` and
 # `items.real.jsonl`, each with a manifest, so the promise named a file no reader could
@@ -1016,6 +1080,7 @@ def main() -> int:
     problems.extend(check_no_control_characters())
     problems.extend(check_registration_draft())
     problems.extend(check_item_set_names())
+    problems.extend(check_deposit_inventory())
     problems.extend(check_quotes("--skip-pages" not in flags))
 
     if problems:
