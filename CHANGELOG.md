@@ -548,10 +548,15 @@ theory against Section 7 of the protocol.
 ### The chain-to-item rule, the probe's error, and the pilot boundary (27 November 2026, before deposit)
 
 - A count line needs a unit, and Section 8 did not say how a chain-level measurement became
-  an item-level outcome. It now does: an item's Prediction 1 outcome is the mode of that
-  item's ten terminal measurements, and a tie across chains is scored against support rather
-  than broken by a rule invented after the fact, so the count is conservative and identical
-  in every arm. The checker holds the sentence to the replicate count the design runs.
+  an item-level outcome. It now does: an item's terminal distribution is the mean of its ten
+  chains' terminal distributions, weighted equally whatever q a chain drew, and the item's
+  modal answer is that average's largest share; a tie for the largest share is scored against
+  support rather than broken by a rule invented after the fact. Averaging the proportions
+  rather than voting on ten separate argmax decisions is the point: a per-chain modal answer
+  taken on q = 20 draws is noisy, and equal weighting stops a chain extended to 60 draws from
+  deciding the item by itself. An earlier version of this rule took the mode of the ten
+  per-chain answers; it was replaced before deposit for exactly that reason. The checker holds
+  the sentence to the replicate count the design runs.
 
 - Probe sampling error was described but not carried into the analysis. Every measurement
   records the q actually drawn, T_d is re-derived on the 20-draw subset alone, and a T_d that
@@ -575,4 +580,4 @@ theory against Section 7 of the protocol.
   samples after three redraws, and a recorded protocol violation - requires the clause that
   excluded each chain to be recorded, and forbids adding a rule after the first chain runs.
 
-The paper is 7,015 words / 17 pp (was 6,925 / 17 pp); S1 is 7,420 words / 12 pp (was 6,061 / 10 pp).
+The paper is 7,015 words / 17 pp (was 6,925 / 17 pp); S1 is 7,487 words / 12 pp (was 6,061 / 10 pp).

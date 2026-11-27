@@ -8,18 +8,18 @@ rather than against a page that may have been cached.
 
 Zenodo archives a release's Git tree: the tracked files at the tag, without `.git` and
 without anything untracked or ignored. This release's tree is **22 files,
-1,844,188 bytes**:
+1,845,521 bytes**:
 
 | File | Bytes |
 | :---- | ----: |
 | `.gitattributes` | 114 |
 | `.gitignore` | 455 |
 | `.zenodo.json` | 2,222 |
-| `CHANGELOG.md` | 40,184 |
+| `CHANGELOG.md` | 40,616 |
 | `DEPOSIT.md` | 6,333 |
-| `Iterative-Summarization Protocol.docx` | 31,760 |
-| `Iterative-Summarization Protocol.md` | 43,868 |
-| `Iterative-Summarization Protocol.pdf` | 272,690 |
+| `Iterative-Summarization Protocol.docx` | 31,903 |
+| `Iterative-Summarization Protocol.md` | 44,271 |
+| `Iterative-Summarization Protocol.pdf` | 273,045 |
 | `LICENSE` | 3,009 |
 | `README.md` | 6,453 |
 | `RELEASE_NOTES.md` | 3,132 |
@@ -27,14 +27,14 @@ without anything untracked or ignored. This release's tree is **22 files,
 | `Restorage Drift.md` | 50,120 |
 | `Restorage Drift.pdf` | 664,538 |
 | `build.py` | 10,922 |
-| `check_thresholds.py` | 54,584 |
+| `check_thresholds.py` | 54,564 |
 | `fig-header.tex` | 200 |
 | `figures/fig1-cycle.png` | 115,158 |
 | `figures/fig2-drift.png` | 189,954 |
 | `figures/make_figures.py` | 12,184 |
 | `make_docx.py` | 7,829 |
-| `tests/mutation_check.py` | 7,236 |
-| **Total** | **1,844,188** |
+| `tests/mutation_check.py` | 7,256 |
+| **Total** | **1,845,521** |
 
 Reproduce the count and the total:
 

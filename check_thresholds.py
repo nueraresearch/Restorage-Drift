@@ -945,13 +945,13 @@ def check_analysis_specs(text: str) -> list[str]:
     to the constant it names where a constant exists.
     """
     out: list[str] = []
-    m = re.search(r"mode of that item's (\w+) terminal measurements", text)
+    m = re.search(r"mean of its (\w+) chains' terminal distributions", text)
     if not m:
         out.append("Section 8: the item-level rule for the modal answer is missing")
     elif NUMBER_WORDS.get(m.group(1)) != REPLICATES:
-        out.append(f"Section 8: says {m.group(1)} terminal measurements, the design runs "
+        out.append(f"Section 8: says {m.group(1)} chains, the design runs "
                    f"{REPLICATES} replicates per item")
-    for anchor, where in (("tie across chains", "the tie rule across chains"),
+    for anchor, where in (("tie for the largest share", "the tie rule"),
                           ("20-draw subset", "the probe-error sensitivity analysis"),
                           ("confirmatory sample begins with the first chain run after",
                            "the pilot-to-confirmatory boundary")):
