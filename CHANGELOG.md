@@ -210,3 +210,35 @@ base sampling rate rather than the adaptive rule. Both are now fixed.
 
 S1 is now 7 pp, 3,943 words (was 6 pp, 3,207). The paper is unchanged at 16 pp, 6,729
 words.
+
+### Threshold calibration pass (27 November 2026, before deposit)
+
+Two numerical problems, both in S1, both visible only by reading Section 5.5 of the
+theory against Section 7 of the protocol.
+
+- The failure line for Prediction 1 sat at 20 of 40, which was the no-effect rate while
+  one half was taken as chance. It fired on 56% of runs in which nothing was happening
+  and on none of the runs the study is powered for: a verdict that cannot distinguish
+  the null from the alternative. Every count-based line is now derived from exact
+  binomial error rates against a stated no-effect rate, with support at alpha <= .01,
+  failure at beta <= .10, and power reported. Prediction 1 becomes 26 of 40 against
+  22 of 40 (alpha 1e-7, beta .005, power .95 at a .75 effect). Prediction 7 becomes 28
+  of 40 against 23 of 40, its no-effect rate being one half (alpha .008, power .96 at
+  .80). Prediction 9 becomes 280 of 400 against 240 of 400 against .27 (power >= .99).
+  Prediction 5, which has only 20 pairs to work with, becomes 14 of 20 against 9 of 20
+  (power .79), and the table names it as the least powered claim.
+- Prediction 5 required terminals within total-variation distance 0.20 of the prior.
+  Proposition 3's limit is the tempered prior, and at the theory's own illustrative
+  settings that distance is 0.29, so the criterion was unsatisfiable by construction.
+  S1 now tests mode agreement, which monotone tempering preserves, and reports distance
+  against the implied exponent instead of scoring it. The theory states the same
+  distinction in Section 5.5, with the 0.07 and 0.29 values.
+- New Section 7.1 gives the derivation, the per-prediction table, a 200,000-run Monte
+  Carlo check of the Prediction 1 rule, and the line between inferential thresholds and
+  the tolerances of Predictions 4 and 8. Prediction 2's two adjacent contrasts are
+  Holm-adjusted; nothing else is adjusted across predictions.
+- Section 9 no longer says the thresholds come from no power calculation. The survival
+  claims are the ones without one, and Section 9 says why.
+
+The paper is 6,848 words / 16 pp (was 6,729); S1 is 4,658 words / 8 pp (was 3,943 /
+7 pp).
