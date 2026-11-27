@@ -545,4 +545,34 @@ theory against Section 7 of the protocol.
   equal the file's records, and both must equal the "each of 8 items" that S1 states, so the
   pilot's size cannot drift away from the prose either.
 
-The paper is 7,015 words / 17 pp (was 6,925 / 17 pp); S1 is 7,174 words / 12 pp (was 6,061 / 10 pp).
+### The chain-to-item rule, the probe's error, and the pilot boundary (27 November 2026, before deposit)
+
+- A count line needs a unit, and Section 8 did not say how a chain-level measurement became
+  an item-level outcome. It now does: an item's Prediction 1 outcome is the mode of that
+  item's ten terminal measurements, and a tie across chains is scored against support rather
+  than broken by a rule invented after the fact, so the count is conservative and identical
+  in every arm. The checker holds the sentence to the replicate count the design runs.
+
+- Probe sampling error was described but not carried into the analysis. Every measurement
+  records the q actually drawn, T_d is re-derived on the 20-draw subset alone, and a T_d that
+  moves under that re-derivation is reported as a boundary case rather than a stable
+  crossing. Because the sequential rule varies q across cycles and chains, the survival model
+  is also fitted with the per-measurement q as a covariate, and an ordering that changes
+  under that fit is reported as sensitive to the sampling rule.
+
+- Clustering was covered by the random intercept but not stated as the reason the count lines
+  are unaffected by it: chains are nested in items by construction, each count line takes the
+  item as its unit, and the item is the unit of every bootstrap interval.
+
+- The pilot had no end. It now has one: the pilot ends when both sets are built, measured and
+  screened; the confirmatory sample begins with the first chain run after the forty-item
+  set's manifest is frozen and recorded in the registration, and no chain run before that
+  moment is analysed.
+
+- The registration draft's chain-exclusion rule was too coarse to apply without judgement.
+  It now names five objective clauses - call failure or empty text, output over the stated
+  limit or ending mid-sentence, an unparsable response under the frozen rule, too few usable
+  samples after three redraws, and a recorded protocol violation - requires the clause that
+  excluded each chain to be recorded, and forbids adding a rule after the first chain runs.
+
+The paper is 7,015 words / 17 pp (was 6,925 / 17 pp); S1 is 7,420 words / 12 pp (was 6,061 / 10 pp).

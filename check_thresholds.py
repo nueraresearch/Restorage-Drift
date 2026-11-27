@@ -937,6 +937,29 @@ def check_item_set_names() -> list[str]:
     return out
 
 
+def check_analysis_specs(text: str) -> list[str]:
+    """The analysis statements that tie a count line to the design must still be there.
+
+    Three of them were added because a reader could not tell how a chain-level measurement
+    became an item-level count, and one because the pilot had no boundary. Each is anchored
+    to the constant it names where a constant exists.
+    """
+    out: list[str] = []
+    m = re.search(r"mode of that item's (\w+) terminal measurements", text)
+    if not m:
+        out.append("Section 8: the item-level rule for the modal answer is missing")
+    elif NUMBER_WORDS.get(m.group(1)) != REPLICATES:
+        out.append(f"Section 8: says {m.group(1)} terminal measurements, the design runs "
+                   f"{REPLICATES} replicates per item")
+    for anchor, where in (("tie across chains", "the tie rule across chains"),
+                          ("20-draw subset", "the probe-error sensitivity analysis"),
+                          ("confirmatory sample begins with the first chain run after",
+                           "the pilot-to-confirmatory boundary")):
+        if anchor not in text:
+            out.append(f"Section 8: {where} is missing")
+    return out
+
+
 def main() -> int:
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
     if "--counts" in flags:
@@ -1093,6 +1116,7 @@ def main() -> int:
     problems.extend(check_registration_draft())
     problems.extend(check_item_set_names())
     problems.extend(check_deposit_inventory())
+    problems.extend(check_analysis_specs(text))
     problems.extend(check_quotes("--skip-pages" not in flags))
 
     if problems:

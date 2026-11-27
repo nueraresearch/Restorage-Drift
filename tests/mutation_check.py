@@ -102,6 +102,11 @@ def mutations() -> list[tuple[str, Path, str, str, str]]:
         ("7.1 loses the argument", S1, "equal footing", "equal terms", "equal footing"),
         ("7.1 zero-rate paragraph", S1, "**Why one half, and not zero.**", "**Why one half.**",
          "zero no-effect rate is missing"),
+        ("item-level rule loses its replicate count", S1,
+         "mode of that item's ten terminal measurements", "mode of its terminal measurements",
+         "item-level rule for the modal answer"),
+        ("tie rule removed", S1, "tie across chains", "tie between chains",
+         "tie rule across chains"),
     ]
     row = inventory_row()
     if row is not None:
