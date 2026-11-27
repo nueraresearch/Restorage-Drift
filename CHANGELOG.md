@@ -469,4 +469,21 @@ theory against Section 7 of the protocol.
   rather than a stale sentence in the protocol. The guard skips the pack on a clean
   clone, as the draft guard already does.
 
+### Release housekeeping (27 November 2026, before deposit)
+
+- The only tag, `v1.0.0`, still named an earlier commit. It was cut before the probe-proxy
+  paragraph, the Prediction 1 null correction and the item-set naming, so a release
+  published from it would have archived the older tree while `README.md`, `.zenodo.json`
+  and this changelog called the release 1.0.0. No GitHub release was ever created from it
+  and no DOI was minted, so nothing published was rewritten: the tag was re-pointed to the
+  corrected tree, and its annotated message rewritten from the built artifacts — 19
+  references, 17 pp at 7,006 words, an eleven-page protocol at 6,655 words — replacing
+  figures that named a 16-page, 6,692-word release with a six-page protocol.
+
+- `DEPOSIT.md`'s inventory and its reproduction command now describe that one tree, so
+  `git ls-tree -r --long v1.0.0` prints the 21 files and the total the table lists, rather
+  than a total measured on `main` beside a command that measures the tag. Creating the
+  release, which is what mints the DOI, remains the author's step; this entry records the
+  re-cut so a reader can tell the released tree from the commits that preceded it.
+
 The paper is 7,006 words / 17 pp (was 6,925 / 17 pp); S1 is 6,655 words / 11 pp (was 6,061 / 10 pp).

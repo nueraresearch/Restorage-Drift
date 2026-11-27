@@ -8,14 +8,14 @@ rather than against a page that may have been cached.
 
 Zenodo archives a release's Git tree: the tracked files at the tag, without `.git` and
 without anything untracked or ignored. This release's tree is **21 files,
-1,811,319 bytes**:
+1,812,517 bytes**:
 
 | File | Bytes |
 | :---- | ----: |
 | `.gitattributes` | 114 |
 | `.gitignore` | 455 |
 | `.zenodo.json` | 2,223 |
-| `CHANGELOG.md` | 32,682 |
+| `CHANGELOG.md` | 33,880 |
 | `DEPOSIT.md` | 6,295 |
 | `Iterative-Summarization Protocol.docx` | 29,807 |
 | `Iterative-Summarization Protocol.md` | 39,375 |
@@ -33,7 +33,7 @@ without anything untracked or ignored. This release's tree is **21 files,
 | `figures/fig2-drift.png` | 189,954 |
 | `figures/make_figures.py` | 12,184 |
 | `make_docx.py` | 7,829 |
-| **Total** | **1,811,319** |
+| **Total** | **1,812,517** |
 
 Reproduce the count and the total:
 
