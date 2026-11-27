@@ -259,9 +259,18 @@ theory against Section 7 of the protocol.
   support.
 - The note under that table claimed alpha never exceeds .008, which Prediction 7's
   .0083 line contradicts. The bound is corrected and the note now carries every row's
-  alpha and beta (1: 1e-7 and .005; 5a: 3e-5 and .0039; 5b: 8.8e-4 and .0039; 7: .0083
-  and .001; 9: below 1e-40 and 1e-15), so a reader can still check each error rate now
-  that those two columns are gone.
+  alpha and beta (1: 1.1e-7 and .005; 5a: 3e-5 and .0039; 5b: 8.8e-4 and .0039; 7: .0083
+  and .001; 9: 1e-27 and .0059), so a reader can still check each error rate now that
+  those two columns are gone.
+- That list was itself stale in two places, which the check below caught. Prediction 9's
+  entry still carried the alpha and beta of the 400-chain version, and the "largest
+  beta" sentence pointed at Prediction 1 when Prediction 9's is larger. Both are
+  corrected: 9 reads 1.0e-27 and 5.9e-3, and the maximum is .0059 at Prediction 9.
+  Rather than leave the next reader to find this, `check_thresholds.py` recomputes every
+  row's alpha, beta and power from its unit count, no-effect rate and line, and compares
+  them with the table, the note and the prediction text. `build.py` runs it first and
+  refuses to make a PDF when they disagree. Four deliberate mutations — a table count, a
+  note rate, a prediction count and a power cell — each stop the build.
 
-The paper is 6,848 words / 16 pp (was 6,729); S1 is 5,140 words / 9 pp (was 3,943 /
+The paper is 6,848 words / 16 pp (was 6,729); S1 is 5,142 words / 9 pp (was 3,943 /
 7 pp).
