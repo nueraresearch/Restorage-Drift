@@ -351,7 +351,7 @@ These conditions can be tested in one system where the reconstruction half of Se
 
 **Conflicts of interest.** The author declares no competing interests.
 
-**Data availability.** This article reports no empirical data. The companion protocol (Supplementary Material S1) specifies the data the proposed study would generate; materials, prompts, and analysis code will be deposited in a public repository upon execution.
+**Data availability.** No data were collected, and this article reports none. The one artefact the proposed study possesses before it runs is its item set: `items.jsonl` travels in the registration pack that accompanies the preregistration, identified by the SHA-256 digest recorded there, and is released when the first chain is analysed rather than published in this repository. Publishing it here would place the item text in the training data of any model that later reads the repository, which is the contamination the protocol's screen exists to detect. Everything the run produces, together with the materials, prompts and analysis code, will be deposited in a public repository on execution, as Supplementary Material S1 specifies.
 
 **Author contributions (CRediT).** J.B.T. Beebe: Conceptualization, Methodology, Formal analysis, Writing – original draft, Writing – review & editing.
 

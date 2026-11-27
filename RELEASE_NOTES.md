@@ -4,8 +4,8 @@ Theory paper and its companion test protocol. No empirical data.
 
 ## Contents
 
-- `Restorage Drift.pdf` — the theory paper, 17 pp, 6,925 words.
-- `Iterative-Summarization Protocol.pdf` — Supplementary Material S1, the test protocol, 10 pp.
+- `Restorage Drift.pdf` — the theory paper, 17 pp, 7,002 words.
+- `Iterative-Summarization Protocol.pdf` — Supplementary Material S1, the test protocol, 11 pp.
 - Markdown sources, `.docx` builds, both figures, and the scripts that produce all of it.
 
 ## Figures

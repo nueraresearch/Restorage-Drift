@@ -183,3 +183,9 @@ The count-based thresholds carry their own power, tabulated in Section 7.1; the 
 - **Summarization is not memory.** Nothing here bears on reconsolidation or on biological capacity limits; the token budget is a capacity parameter by analogy, not by measurement.
 - **The items are not the Mandela Effect.** The protocol tests whether prior-favored variants displace improbable ones under repeated compression. It does not test whether any historical misremembering arose that way.
 - **A null result does not falsify the framework.** It falsifies the claim that *this* $C$ and *this* $R$ produce drift under *these* budgets. The framework's generality is what makes it hard to kill, and this protocol is deliberately aimed at the narrow, killable part.
+
+## **11\. Data availability**
+
+No data were collected for this protocol, and none are reported here. Its items exist, and they are the one exception to the rule above: `items.jsonl` travels in the registration pack that accompanies the preregistration, is identified by the SHA-256 digest recorded there, and is released when the first chain is analysed (Section 3.1). It is deliberately not in the repository that carries the theory and this protocol, because item text published beside them enters the training data of any model that later reads the repository — which is the contamination the screen of Section 3 exists to detect, so publishing the set there would defeat the screen that justifies using it.
+
+Nothing else exists yet. The chains, probe responses and scores described in Sections 6 to 8 are produced by the run; they are deposited, in the classes and at the points the registration fixes, together with the analysis code, when it executes.

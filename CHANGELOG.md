@@ -384,4 +384,13 @@ theory against Section 7 of the protocol.
   recorded digest and byte size in `DEPOSIT.md` were updated to match, and the guard
   compares them, so the two cannot drift apart.
 
-The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 6,061 words / 10 pp (was 5,854 / 10 pp).
+- The paper and S1 now say what data exist and where the item set lives. The paper's
+  data-availability paragraph said only that materials would be deposited "upon execution";
+  it and a new Section 11 in S1 now state that no data were collected, that `items.jsonl`
+  travels in the registration pack with its SHA-256 recorded there and is released when the
+  first chain is analysed rather than published in the repository — since item text beside
+  the theory would enter the training data of any model reading it, defeating the screen
+  that makes the set usable — and that the chains, probe responses and scores are
+  deposited with the analysis code when the run executes.
+
+The paper is 7,002 words / 17 pp (was 6,925 / 17 pp); S1 is 6,219 words / 11 pp (was 6,061 / 10 pp).
