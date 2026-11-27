@@ -1,18 +1,22 @@
 Restorage Drift
 Copyright (c) 2026 J.B.T. Beebe
 
-This repository is released under two licences, by file type.
+Everything in this repository, and in the archived record built from it, is
+released under CC BY 4.0. The build scripts are additionally available under
+the MIT Licence, at your option. No file is available only under MIT: the MIT
+grant widens what you may do with the scripts without withdrawing the CC BY
+4.0 grant that already covers them.
 
 --------------------------------------------------------------------------------
-1. Text, figures, and documentation
+1. The work, all files
 --------------------------------------------------------------------------------
 
 SPDX-License-Identifier: CC-BY-4.0
 
-The manuscript sources (Restorage Drift.md, Iterative-Summarization Protocol.md,
-Human Restorage Study.md), the built PDF and DOCX files, the figures in
-figures/, and this repository's documentation are licensed under the Creative
-Commons Attribution 4.0 International Licence (CC BY 4.0).
+The manuscript sources (Restorage Drift.md, Iterative-Summarization Protocol.md),
+the built PDF and DOCX files, the figures in figures/, the build scripts, and
+this repository's documentation are licensed under the Creative Commons
+Attribution 4.0 International Licence (CC BY 4.0).
 
 You are free to share and adapt this material for any purpose, including
 commercially, provided you give appropriate credit, provide a link to the
@@ -29,13 +33,16 @@ and the version, and should link to this repository or to the archived DOI of
 the version used.
 
 --------------------------------------------------------------------------------
-2. Build scripts
+2. An additional option for the build scripts
 --------------------------------------------------------------------------------
 
 SPDX-License-Identifier: MIT
 
-The following files are licensed under the MIT Licence:
+As an alternative to the CC BY 4.0 terms above, and not in place of them, the
+following files are also made available under the MIT Licence:
+
   build.py
+  check_thresholds.py
   make_docx.py
   figures/make_figures.py
 

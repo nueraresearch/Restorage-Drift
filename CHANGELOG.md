@@ -310,4 +310,14 @@ theory against Section 7 of the protocol.
   contamination screen exists: item text in this repository would sit in the training data of
   any model that later reads it. No item text is included here.
 
+- Zenodo holds one licence per record, so the deposit could not honestly carry the old
+  split ("text and figures CC BY 4.0; build scripts MIT"): the archive contains both, and
+  the record-level field would have contradicted the LICENSE inside it. The record is now
+  CC BY 4.0 in its entirety, with MIT as an additional option for the build scripts rather
+  than a carve-out, and LICENSE says so instead of "two licences, by file type". While
+  rewriting it: check_thresholds.py was missing from the MIT list (three of four scripts
+  were named) and Human Restorage Study.md was listed although it is not in the record. A
+  separate scripts record was considered and rejected, since the deposit is the tag tree
+  and the scripts would stay inside the paper's archive either way.
+
 The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 5,700 words / 10 pp (was 5,206 / 9 pp).

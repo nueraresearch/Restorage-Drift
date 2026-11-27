@@ -30,4 +30,4 @@ No empirical data, in this or any domain. No validation of the framework in huma
 
 ## Licence
 
-Text and figures: CC BY 4.0. Build scripts: MIT. See `LICENSE`.
+Everything here, and in the archived record, is CC BY 4.0. The build scripts are additionally available under MIT, at your option. See `LICENSE`.

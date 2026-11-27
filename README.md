@@ -79,4 +79,4 @@ The current public version is this repository, at tag `v1.0.0`. No archived copy
 
 ## Licence
 
-Text and figures: CC BY 4.0. Build scripts: MIT. See `LICENSE`.
+Everything here, and in the archived record, is CC BY 4.0. The build scripts are additionally available under MIT, at your option. See `LICENSE`.
