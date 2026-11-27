@@ -77,7 +77,7 @@ All measures are computed from $m_n$, the distribution over the four candidates 
 1. **Directionality.** In Arm A at $W = 15$, $\hat A \neq x^{*}$ and $\hat A = \arg\max_x \hat P(x)$ for a majority of items.
 2. **Budget ordering.** $T_d(W{=}15) < T_d(W{=}30) < T_d(W{=}60)$ in paired comparisons within item.
 3. **Re-storage.** $T_d$ in Arm A is shorter than in Arm C at matched total token cost; a substantial share of Arm C chains is censored at $K$.
-4. **Compression necessity.** B1 shows no threshold crossing ($m_K(x^{*}) \geq \tfrac{1}{2}$ throughout), and B2 with $x^{*}$ retained behaves like B1. B2 with $x^{*}$ dropped crosses at $n = 1$ instead: the detail is absent from the first summary rather than eroding across cycles, so $T_d = 1$ and the remaining cycles reconstruct the prior over the survivors. The contrast is the point—instant loss and gradual drift are different trajectories, and only the second requires the recursion.
+4. **Compression necessity.** B1 shows no threshold crossing ($m_K(x^{*}) \geq \tfrac{1}{2}$ throughout), and B2 with $x^{*}$ retained behaves like B1. B2 with $x^{*}$ dropped crosses at $n = 1$ instead: the detail is absent from the first summary rather than eroding across cycles, so $T_d = 1$. The later cycles reconstruct nothing: B2 copies the retained span character for character, so $x^{*}$ never re-enters the stored state, and any mass at $x^{*}$ in a later measurement comes from the probe generating it out of the model's prior rather than from the state. The contrast is the point—instant loss and gradual drift are different trajectories, and only the second requires the recursion.
 5. **Attractor prior-determination.** Arm D pairs converge: terminal distributions within a pair are closer to each other than to their own starting states, and both sit near $\hat P$'s mode.
 6. **Prior source.** Arm E drifts, but less than Arm A: fictional items retain $x^{*}$ longer because no training prior supplies the alternative.
 7. **Mode sensitivity.** Orthographic and qualifier-deletion conditions cross at different $T_d$ than paraphrase within the same item.
@@ -116,7 +116,7 @@ Measurement costs twenty times more than generation. An earlier draft of this se
 
 Probes are about 95% of both calls and tokens, so this is a measurement budget far more than a generation budget, and the cheapest thing to cut is probe frequency rather than cycles or items. Money cost depends on the provider's per-token pricing and the input/output split; the token counts above are what to price.
 
-A third cost does not appear in the table and is larger than either call count in person-hours: scoring. Two coders over the subsample described in Section 8 is 1,440 codings for the minimal slice and 7,200 for the full run, at roughly a minute each, or about 24 and 120 hours. That, rather than the API bill, is what limits the evidence measure, and it is why the measure is subsampled rather than applied to every chain.
+A third cost does not appear in the table and is larger than either call count in person-hours: scoring. Two coders over the subsample described in Section 8 is 720 stored texts scored twice — 1,440 codings — for the minimal slice, and 7,200 texts scored twice — 14,400 codings — for the full run, at roughly a minute each, or about 24 and 240 hours. That, rather than the API bill, is what limits the evidence measure, and it is why the measure is subsampled rather than applied to every chain.
 
 
 

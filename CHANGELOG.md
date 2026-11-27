@@ -10,7 +10,7 @@ Initial release. Theory paper plus Supplementary Material S1. No empirical data.
 
 ### Paper
 
-- Theory paper at 16 pp, 6,695 words, within a 7,500-word limit.
+- Theory paper at 16 pp, 6,730 words, within a 7,500-word limit.
 - Abstract, keywords, falsifiability conditions, open research questions,
   declarations, and 19 references.
 
@@ -151,6 +151,31 @@ text, identical `document.xml`, same page and table counts — and the only byte
 differ from the first published files are the embedded dates, the `/ID` and the zip
 timestamps.
 
-The paper is 6,695 words (was 6,692) and S1 3,162 (was 3,142); both PDFs and DOCX
-builds were regenerated, and the word count was updated wherever it was quoted. Page
-counts are unchanged at 16 and 6.
+That pass left the paper at 6,695 words (was 6,692) and S1 at 3,162 (was 3,142); both
+PDFs and DOCX builds were regenerated, and the word count was updated wherever it was
+quoted. Page counts were unchanged at 16 and 6.
+
+### Second correction pass (27 November 2026, before deposit)
+
+Four corrections from an external review, all of them in the released text:
+
+- S1, Prediction 4: the arm B2 prediction said the later cycles "reconstruct the prior
+  over the survivors". B2 copies the retained span character for character and never
+  re-inserts the dropped candidate, so there is no reconstruction for that clause to
+  describe. The prediction now says that any mass at the dropped candidate in a later
+  measurement comes from the probe generating it out of the model's prior, not from the
+  stored state, which is what the arm can actually show.
+- S1, Section 9: the full-run coding estimate counted stored texts rather than codings.
+  Two coders over 7,200 subsampled texts is 14,400 codings, so the full run is about 240
+  person-hours, not 120. The minimal-slice figure already doubled for the second coder
+  and was correct.
+- Paper, Section 1: the attractor was defined as a "self-reinforcing" state configuration
+  that "resist[s] further departure". Proposition 3 proves something narrower: convergence
+  of the reconstructed distribution once the active support has stabilized, with the limit
+  fixed by the prior restricted to the survivors. The definition now states that limit and
+  says an attractor is a distribution over candidates, not a single state.
+- README: S1 is described as a proposed validation protocol rather than a
+  pre-registration-ready one, since its decision rules are still directional.
+
+The paper is 6,730 words (was 6,695) and S1 3,207 (was 3,162); both PDFs and both DOCX
+builds were rebuilt and every quoted count updated. Page counts remain 16 and 6.

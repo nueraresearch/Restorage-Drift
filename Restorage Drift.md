@@ -35,7 +35,7 @@ To anchor the framework clearly from the outset, the theory defines the stored s
 * $R$ **(Reconstruction Operator):** The generative process that rebuilds a usable state from compressed information, conditioned on available context and priors.
 * $P$ **(Prior Distribution / Semantic Context):** Existing expectations, cultural patterns, linguistic norms, schemas, and contextual cues that shape how missing or compressed detail is filled in during reconstruction.
 * $T_d$ **(Semantic Drift Threshold):** The cycle at which the original state no longer retains a majority of the reconstructed mass. It is a majority-loss convention on a probability distribution, not a decomposition of how much of the reconstruction the prior supplied; crossing it changes the direction of subsequent cycles rather than introducing a minor, easily reversed slip. Section 5.6 separates it from the cycle at which the original becomes unavailable altogether.
-* $A$ **(Attractor State):** A reconstructed state configuration that becomes self-reinforcing across subsequent compression-reconstruction cycles, resisting further departure once reached.
+* $A$ **(Attractor State):** The limiting distribution to which reconstruction converges once the active support has stabilized (Proposition 3), located by the prior restricted to the surviving candidates. An attractor here is a distribution over candidates rather than a single state, and it holds only for as long as the support that defines it does.
 
 ## **2\. The Operational Cycle & Resource Constraint Principle**
 

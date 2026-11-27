@@ -22,8 +22,8 @@ What this paper claims is narrower. It separates three things that a single meas
 
 | File | What it is |
 |---|---|
-| `Restorage Drift.md` `.pdf` `.docx` | The theory paper, 16 pp, 6,695 words |
-| `Iterative-Summarization Protocol.md` `.pdf` `.docx` | Supplementary Material S1: the pre-registration-ready test protocol |
+| `Restorage Drift.md` `.pdf` `.docx` | The theory paper, 16 pp, 6,730 words |
+| `Iterative-Summarization Protocol.md` `.pdf` `.docx` | Supplementary Material S1: the proposed validation protocol |
 | `build.py` | Rebuilds the paper and S1 PDFs |
 | `make_docx.py` | Rebuilds the `.docx` files with fixed table geometry |
 | `fig-header.tex` | LaTeX header shared by both PDF builds |
@@ -61,7 +61,7 @@ Word count, measured with the LaTeX layout blocks stripped:
 sed -e '/```{=latex}/,/```/d' "Restorage Drift.md" | wc -w
 ```
 
-Current count: 6,695 words, against a 7,500-word journal limit.
+Current count: 6,730 words, against a 7,500-word journal limit.
 
 ## How the framework could fail
 
