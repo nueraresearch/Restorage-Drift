@@ -271,6 +271,17 @@ theory against Section 7 of the protocol.
   them with the table, the note and the prediction text. `build.py` runs it first and
   refuses to make a PDF when they disagree. Four deliberate mutations — a table count, a
   note rate, a prediction count and a power cell — each stop the build.
+- The Section 9 cost table was the last block of derived numbers without a guard, and it
+  had already drifted once when the adaptive probe rule was folded in. The checker now
+  recomputes it too: summarization and probe call counts, totals, token estimates, the
+  10% and 30% band shares, the 60-draw ceiling, the probe share of calls and tokens, and
+  the coding hours, all from the stated design (6 arm-cells, 10 replicates, 10 cycles,
+  20 and 60 draws, 110 and 100 tokens, 40 or 4 items). Counts are compared exactly and
+  only the rounded millions get a tolerance, which is what let two off-by-a-few-hundred
+  call counts through on the first attempt. The design sentence and the 20 + 0.2 x 40 =
+  28 rule are anchored as well, so changing a constant in one place fails. Twelve
+  deliberate mutations, including a call count, a total, a band share and a coding hour,
+  each stop the build.
 
 The paper is 6,848 words / 16 pp (was 6,729); S1 is 5,142 words / 9 pp (was 3,943 /
 7 pp).

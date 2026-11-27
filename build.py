@@ -87,12 +87,12 @@ def main():
         print(f"missing source: {MANUSCRIPT.name}", file=sys.stderr)
         return 2
 
-    # Section 7.1 states the same counts in three places. Recomputed error rates have
-    # to agree with all of them, so check before spending a minute on figures.
-    step("threshold arithmetic")
+    # Sections 7.1 and 9 each state derived numbers in several places. Recompute them
+    # before spending a minute on figures.
+    step("derived numbers")
     rc = run([sys.executable, ROOT / "check_thresholds.py"])
     if rc.returncode != 0:
-        print("Section 7.1 disagrees with its own arithmetic - not building", file=sys.stderr)
+        print("derived numbers disagree with their arithmetic - not building", file=sys.stderr)
         return rc.returncode
 
     os.environ.setdefault("SOURCE_DATE_EPOCH", str(BUILD_EPOCH))

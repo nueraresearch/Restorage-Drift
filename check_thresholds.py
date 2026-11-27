@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Check that Section 7.1's numbers are identical in all three places they appear.
+"""Check the protocol's derived numbers against the arithmetic that produces them.
 
-The table, the note beneath it, and the nine predictions carry the same counts and
-error rates, and every error in the last several revisions was one of those disagreeing
-with another. build.py runs this first and refuses to make a PDF if it fails.
+Two blocks qualify. Section 7.1 states a count and two error rates per prediction, in a
+table, a note and nine predictions that have to agree. Section 9 states call counts,
+token estimates and band-share sensitivities that are all products of the design. Both
+have drifted before, so build.py runs this first and refuses to make a PDF if it fails.
 
     python check_thresholds.py      # exit 0 when consistent, 1 with a report
 
-ROWS is the specification: unit count, the no-effect rate, the minimum effect, and the
-two lines. alpha, beta and power are recomputed here from those four, so a number
-written into the document cannot drift from the arithmetic behind it.
+ROWS is the specification for 7.1: unit count, the no-effect rate, the minimum effect,
+and the two lines. alpha, beta and power are recomputed here from those four, so a
+number written into the document cannot drift from the arithmetic behind it. The cost
+constants below play the same role for 9, and the prose that states them is anchored
+too, so changing a replicate count in one place and not the other fails the check.
 """
 from __future__ import annotations
 
@@ -28,6 +31,22 @@ ITEMS = 40
 CODED_REPLICATES = 3
 CODED_CHAINS = ITEMS * CODED_REPLICATES   # 120
 PAIRS = ITEMS // 2                        # 20
+
+# --- Section 9 cost model ---------------------------------------------------------
+# Every figure in the cost table is a product of these, so they are stated once here
+# and the prose that introduces them is checked against them as well.
+CELLS = 6                 # arm-cells, as the table's own row label says
+REPLICATES = 10           # chains per item per condition
+CYCLES = 10               # K
+Q_BASE = 20               # probe samples per measurement
+Q_EXT = 60                # extended draw when the estimate is near one half
+BAND_SHARE = 0.20         # planning assumption for the adaptive rule
+TOK_SUMMARY = 110
+TOK_PROBE = 100
+MINIMAL_ITEMS = 4
+CODED_CYCLES = 10
+
+COST_LABELS = ("Summarization calls", "Probe calls", "Total calls", "Approximate tokens")
 
 ROWS = [
     {"key": "1", "label": "1 Directionality", "n": ITEMS, "p0": 0.25, "p1": 0.75,
@@ -122,6 +141,127 @@ def note_segments(text: str) -> dict[str, str]:
     return {parts[k]: parts[k + 1] for k in range(1, len(parts) - 1, 2)}
 
 
+def calls(items: int) -> int:
+    """Chains times cycles: one summarization, and one measurement, per cycle."""
+    return CELLS * items * CYCLES * REPLICATES
+
+
+def band_samples(share: float) -> float:
+    return Q_BASE + share * (Q_EXT - Q_BASE)
+
+
+def cell_value(cell: str) -> float:
+    raw = cell.replace(",", "").strip()
+    return float(raw[:-1]) * 1e6 if raw.endswith("M") else float(raw)
+
+
+def cost_rows(text: str) -> dict[str, list[str]]:
+    rows = {}
+    for line in text.splitlines():
+        if not line.startswith("| "):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) == 3 and cells[0].startswith(COST_LABELS):
+            rows[cells[0]] = cells[1:]
+    return rows
+
+
+def check_costs(text: str) -> list[str]:
+    """Recompute Section 9 from the design and compare every stated figure."""
+    out: list[str] = []
+    flat = " ".join(text.split())
+    rows = cost_rows(text)
+    q = band_samples(BAND_SHARE)
+    c_min, c_full = calls(MINIMAL_ITEMS), calls(ITEMS)
+
+    def tokens(c: int) -> float:
+        return c * TOK_SUMMARY + c * q * TOK_PROBE
+
+    def row(label: str, expected: tuple[float, float]) -> None:
+        cells = next((c for k, c in rows.items() if k.startswith(label)), None)
+        if cells is None:
+            out.append(f"cost table: no row starting {label!r}")
+            return
+        for side, cell, want in zip(("minimal", "full"), cells, expected):
+            try:
+                got = cell_value(cell)
+            except ValueError:
+                out.append(f"cost table {label} ({side}): {cell!r} is not a number")
+                continue
+            # Counts are exact; only the "7.0M" token cells are rounded, so only they
+            # get a percentage tolerance. Anything else must match the count itself.
+            tol = 0.015 * want if cell.strip().endswith("M") else 0.5
+            if abs(got - want) > tol:
+                out.append(f"cost table {label} ({side}): reads {cell}, "
+                           f"computes {want:,.0f}")
+
+    row("Summarization calls", (c_min, c_full))
+    row("Probe calls", (c_min * q, c_full * q))
+    row("Total calls", (c_min * (1 + q), c_full * (1 + q)))
+    row("Approximate tokens", (tokens(c_min), tokens(c_full)))
+
+    probe_label = next((k for k in rows if k.startswith("Probe calls")), "")
+    if f"{q:g} samples" not in probe_label:
+        out.append(f"cost table: the probe row does not name {q:g} samples per measurement")
+
+    # the arithmetic the adaptive rule is introduced with: 20 + 0.2 x 40 = 28
+    eq = re.search(r"\$%d \+ ([0-9.]+) \\times %d = (\d+)\$" % (Q_BASE, Q_EXT - Q_BASE), text)
+    if not eq:
+        out.append("Section 9: the probe-rule equation was not found")
+    else:
+        share_seen, total_seen = float(eq.group(1)), int(eq.group(2))
+        if abs(share_seen - BAND_SHARE) > 1e-9:
+            out.append(f"probe rule: the equation uses a {share_seen:g} band share, "
+                       f"the model {BAND_SHARE:g}")
+        if total_seen != q:
+            out.append(f"probe rule: the equation totals {total_seen}, computes {q:g}")
+
+    # the design sentence the whole table rests on
+    for anchor in (f"$m = {REPLICATES}$", f"$K = {CYCLES}$", f"$q = {Q_BASE}$",
+                   f"{CELLS} arm-cells", f"about {TOK_SUMMARY} per summary",
+                   f"about {TOK_PROBE} per probe"):
+        if anchor not in flat:
+            out.append(f"Section 9: expected the design statement {anchor!r}")
+
+    # band-share sensitivities, the two named plus the ceiling
+    for share in (0.10, 0.30, 1.0):
+        s = band_samples(share)
+        expected = f"{c_min * s:,.0f} and {c_full * s:,.0f}"
+        if expected not in flat:
+            where = "every measurement" if share == 1.0 else f"{share:.0%} in the band"
+            out.append(f"sensitivity ({where}): expected {expected!r}")
+
+    # probe share of calls and tokens, quoted to the nearest percent
+    share_calls = 100 * q / (1 + q)
+    share_tokens = 100 * (c_full * q * TOK_PROBE) / tokens(c_full)
+    m = re.search(r"Probes are about (\d+)% of both calls and tokens", flat)
+    if not m:
+        out.append("Section 9: the probe-share sentence was not found")
+    else:
+        for name, value in (("calls", share_calls), ("tokens", share_tokens)):
+            if abs(value - int(m.group(1))) > 1.0:
+                out.append(f"probe share of {name}: the sentence says {m.group(1)}%, "
+                           f"computes {value:.1f}%")
+
+    # the coding cost in the same section is derived the same way
+    def texts(items: int) -> int:
+        return CELLS * items * CODED_REPLICATES * CODED_CYCLES
+
+    t_min, t_full = texts(MINIMAL_ITEMS), texts(ITEMS)
+    for needle in (f"{t_min:,} stored texts", f"{2 * t_min:,} codings",
+                   f"{t_full:,} texts scored twice", f"{2 * t_full:,} codings",
+                   f"about {2 * t_min // 60} and {2 * t_full // 60} hours"):
+        if needle not in flat:
+            out.append(f"coding cost: expected {needle!r}")
+
+    print(f"    {'cost':8s} {'minimal':>10s} {'full':>12s}")
+    print(f"    {'calls':8s} {c_min:10,d} {c_full:12,d}")
+    print(f"    {'probes':8s} {c_min * q:10,.0f} {c_full * q:12,.0f}")
+    print(f"    {'tokens':8s} {tokens(c_min) / 1e6:9.1f}M {tokens(c_full) / 1e6:11.1f}M")
+    print(f"    probes are {share_calls:.1f}% of calls, {share_tokens:.1f}% of tokens")
+    return out
+
+
 def main() -> int:
     if not PROTOCOL.exists():
         print(f"missing source: {PROTOCOL.name}")
@@ -207,12 +347,14 @@ def main() -> int:
         if anchor not in text:
             problems.append(f"Section 8: expected {anchor!r}")
 
+    problems.extend(check_costs(text))
+
     if problems:
-        print(f"\n{len(problems)} disagreement(s) between Section 7.1 and its arithmetic:")
+        print(f"\n{len(problems)} disagreement(s) between the protocol and its arithmetic:")
         for p in problems:
             print(f"  - {p}")
         return 1
-    print("\nSection 7.1 consistent: table, note and prediction text agree")
+    print("\nconsistent: 7.1 table, note and predictions agree; 9 cost table recomputes")
     return 0
 
 

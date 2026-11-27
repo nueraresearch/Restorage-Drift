@@ -46,7 +46,7 @@ Requires Pandoc and a LaTeX distribution providing `pdflatex`.
 python build.py
 ```
 
-That rebuilds `Restorage Drift.pdf` and `Iterative-Summarization Protocol.pdf`. It first runs `check_thresholds.py`, which recomputes every alpha, beta and power in Section 7.1 of the protocol from that row's unit count, no-effect rate and line, and stops the build if the table, the note beneath it, or the prediction text disagree with the arithmetic. Run it alone with `python check_thresholds.py`.
+That rebuilds `Restorage Drift.pdf` and `Iterative-Summarization Protocol.pdf`. It first runs `check_thresholds.py`, which recomputes the protocol's derived numbers: every alpha, beta and power in Section 7.1 from that row's unit count, no-effect rate and line, and the Section 9 cost table's call counts, token estimates, band-share sensitivities and coding hours from the stated design. It stops the build when the table, the note beneath it, the prediction text or the design statements disagree with the arithmetic. Run it alone with `python check_thresholds.py`.
 
 A single file by hand:
 
