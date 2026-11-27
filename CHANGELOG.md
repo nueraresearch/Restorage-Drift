@@ -173,9 +173,10 @@ Four corrections from an external review, all of them in the released text:
   that "resist[s] further departure". Proposition 3 proves something narrower: convergence
   of the reconstructed distribution once the active support has stabilized, with the limit
   fixed by the prior restricted to the survivors. The definition now states that limit and
-  says an attractor is a distribution over candidates, not a single state.
+  says an attractor is a distribution over candidates, not a single state. The entry is
+  renamed from "Attractor State" to "Attractor" so the label stops contradicting it.
 - README: S1 is described as a proposed validation protocol rather than a
   pre-registration-ready one, since its decision rules are still directional.
 
-The paper is 6,730 words (was 6,695) and S1 3,207 (was 3,162); both PDFs and both DOCX
+The paper is 6,729 words (was 6,695) and S1 3,207 (was 3,162); both PDFs and both DOCX
 builds were rebuilt and every quoted count updated. Page counts remain 16 and 6.
