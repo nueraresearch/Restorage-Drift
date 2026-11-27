@@ -7,6 +7,9 @@
 
 Steps run in order; the manuscript does not rebuild if the figure step fails.
 """
+import hashlib
+import os
+import re
 import shutil
 import subprocess
 import sys
@@ -17,6 +20,14 @@ ROOT = Path(__file__).resolve().parent
 MANUSCRIPT = ROOT / "Restorage Drift.md"
 PROTOCOL = ROOT / "Iterative-Summarization Protocol.md"
 HEADER = ROOT / "fig-header.tex"
+
+# Reproducible PDFs. pdfTeX stamps /CreationDate and /ModDate from the wall clock and
+# derives the trailer /ID partly from the time, so two builds of the same sources
+# differ. Pin the clock for the child processes (pdfTeX honours SOURCE_DATE_EPOCH),
+# then replace the /ID with a digest of the finished file so it depends on content
+# only. Override the epoch if a caller needs a different one.
+BUILD_EPOCH = 1795737600  # 2026-11-27T00:00:00Z, the release date
+ID_PATTERN = re.compile(rb"(/ID\s*\[\s*<)([0-9A-Fa-f]{32})(>\s*<)([0-9A-Fa-f]{32})(>\s*\])")
 
 
 def step(title):
@@ -34,6 +45,24 @@ def pandoc(src, dst):
                 "--pdf-engine-opt=-halt-on-error",
                 "--include-in-header", HEADER,
                 "-V", "geometry:margin=1in", "-V", "fontsize=11pt"])
+
+
+def normalise_id(pdf):
+    """Replace the trailer /ID with an MD5 of the file itself, in place.
+
+    Both hex strings are rewritten at their original length, so the cross-reference
+    offsets stay valid and no other byte moves. Returns False if the trailer has no
+    /ID in the expected form, which is worth reporting rather than passing over.
+    """
+    data = pdf.read_bytes()
+    if not ID_PATTERN.search(data):
+        return False
+    zeroed = ID_PATTERN.sub(lambda m: m.group(1) + b"0" * 32 + m.group(3) + b"0" * 32 + m.group(5), data)
+    digest = hashlib.md5(zeroed).hexdigest().encode("ascii")
+    fixed = ID_PATTERN.sub(lambda m: m.group(1) + digest + m.group(3) + digest + m.group(5), data)
+    if fixed != data:
+        pdf.write_bytes(fixed)
+    return True
 
 
 def page_count(pdf):
@@ -58,6 +87,9 @@ def main():
         print(f"missing source: {MANUSCRIPT.name}", file=sys.stderr)
         return 2
 
+    os.environ.setdefault("SOURCE_DATE_EPOCH", str(BUILD_EPOCH))
+    print(f"    SOURCE_DATE_EPOCH={os.environ['SOURCE_DATE_EPOCH']}")
+
     t0 = time.time()
 
     if not skip_figs:
@@ -75,7 +107,9 @@ def main():
             print(f"{label} build failed", file=sys.stderr)
             return rc.returncode
         n = page_count(out)
-        print(f"    -> {out.name}" + (f", {n} pages" if n else ""))
+        fixed = normalise_id(out)
+        note = "" if fixed else "  (no /ID found to normalise)"
+        print(f"    -> {out.name}" + (f", {n} pages" if n else "") + note)
 
     print(f"\nall builds finished in {time.time() - t0:.1f}s")
     return 0
