@@ -522,4 +522,27 @@ theory against Section 7 of the protocol.
   `RELEASE_NOTES.md`, the `.zenodo.json` description and the deposit inventory all carry the
   figures the rebuilt PDFs produce.
 
-The paper is 7,006 words / 17 pp (was 6,925 / 17 pp); S1 is 7,009 words / 12 pp (was 6,061 / 10 pp).
+### The pilot sets, labelled (27 November 2026, before deposit)
+
+- The documents called the pack's two construction sets the study set. S1 3.1 said "the
+  real-world set is items.real.jsonl", its Section 11 said the items travel with the
+  preregistration, and the paper and the registration draft said the same. They are pilot
+  material: eight fictional items and eight real-world ones, every prior count null, no
+  screen applied. Registering them as the study set would have committed the preregistration
+  to sixteen items.
+
+- Sixteen cannot carry the confirmatory lines. At p0 = .5 with the .01 ceiling, eight items
+  need 8 of 8 (alpha .0039, power .10) and sixteen need 14 of 16 (alpha .0021, power .20),
+  against 28 of 40 at .82. The forty-item set of Section 9 is therefore the study, and S1
+  now says so: the pilot sets exercise construction, offsets, strata, probe rendering and
+  pairing; no outcome computed from them enters a confirmatory analysis; and they cannot
+  move a threshold in Section 7, because those thresholds are fixed by the binomial
+  arithmetic of 7.1 and not by pilot data.
+
+- S1 3.1 and 11, the paper's data availability and the registration draft's item-set field
+  now say that the confirmatory set does not exist yet and is built and screened before any
+  chain runs. The checker holds the pack to its manifests: each manifest's record count must
+  equal the file's records, and both must equal the "each of 8 items" that S1 states, so the
+  pilot's size cannot drift away from the prose either.
+
+The paper is 7,015 words / 17 pp (was 6,925 / 17 pp); S1 is 7,174 words / 12 pp (was 6,061 / 10 pp).

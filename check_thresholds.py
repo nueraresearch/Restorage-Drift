@@ -898,6 +898,8 @@ def check_item_set_names() -> list[str]:
     if not PACK.exists():
         print("    (registration pack absent - item-set names compared across documents)")
         return out
+    # S1 states the pilot sets' size, so the manifests are held to it rather than trusted.
+    stated = re.search(r"each of (\d+) items", PROTOCOL.read_text(encoding="utf-8"))
     for name in sorted(set().union(*named.values()) if named else set(reference)):
         path = PACK / name
         if not path.exists():
@@ -922,6 +924,16 @@ def check_item_set_names() -> list[str]:
         elif int(m.group(1)) != size:
             out.append(f"registration pack: {manifest.name} records {m.group(1)} bytes, "
                        f"{name} is {size:,}")
+        rows = sum(1 for ln in path.read_text(encoding="utf-8").splitlines() if ln.strip())
+        m = re.search(r'"records": (\d+)', recorded)
+        if not m:
+            out.append(f"registration pack: {manifest.name} records no item count")
+        elif int(m.group(1)) != rows:
+            out.append(f"registration pack: {manifest.name} records {m.group(1)} items, "
+                       f"{name} has {rows}")
+        elif stated is not None and int(stated.group(1)) != rows:
+            out.append(f"S1: the pilot sets are stated as {stated.group(1)} items, "
+                       f"{name} has {rows}")
     return out
 
 

@@ -8,33 +8,33 @@ rather than against a page that may have been cached.
 
 Zenodo archives a release's Git tree: the tracked files at the tag, without `.git` and
 without anything untracked or ignored. This release's tree is **22 files,
-1,831,579 bytes**:
+1,836,693 bytes**:
 
 | File | Bytes |
 | :---- | ----: |
 | `.gitattributes` | 114 |
 | `.gitignore` | 455 |
 | `.zenodo.json` | 2,222 |
-| `CHANGELOG.md` | 36,552 |
+| `CHANGELOG.md` | 38,088 |
 | `DEPOSIT.md` | 6,333 |
-| `Iterative-Summarization Protocol.docx` | 30,822 |
-| `Iterative-Summarization Protocol.md` | 41,385 |
-| `Iterative-Summarization Protocol.pdf` | 270,337 |
+| `Iterative-Summarization Protocol.docx` | 31,192 |
+| `Iterative-Summarization Protocol.md` | 42,353 |
+| `Iterative-Summarization Protocol.pdf` | 271,628 |
 | `LICENSE` | 3,009 |
 | `README.md` | 6,453 |
 | `RELEASE_NOTES.md` | 3,132 |
-| `Restorage Drift.docx` | 321,217 |
-| `Restorage Drift.md` | 50,068 |
-| `Restorage Drift.pdf` | 664,459 |
+| `Restorage Drift.docx` | 321,243 |
+| `Restorage Drift.md` | 50,120 |
+| `Restorage Drift.pdf` | 664,538 |
 | `build.py` | 10,922 |
-| `check_thresholds.py` | 52,536 |
+| `check_thresholds.py` | 53,328 |
 | `fig-header.tex` | 200 |
 | `figures/fig1-cycle.png` | 115,158 |
 | `figures/fig2-drift.png` | 189,954 |
 | `figures/make_figures.py` | 12,184 |
 | `make_docx.py` | 7,829 |
 | `tests/mutation_check.py` | 6,238 |
-| **Total** | **1,831,579** |
+| **Total** | **1,836,693** |
 
 Reproduce the count and the total:
 
@@ -79,16 +79,16 @@ reader cannot obtain it from the DOI. What this record can do is name it by cont
 | | |
 | :---- | :---- |
 | File | `Registration Fields Draft.md` |
-| SHA-256 | `73430eeb0fecda94428adb63463cbf3d5df5267f5bbd427e7c65176ed5b6ba54` |
-| Bytes | 10,809 |
+| SHA-256 | `9f266e1441e0151e7be6384df72ef15a96f44cc95a99423dfce60cb830d19145` |
+| Bytes | 10,958 |
 | Lines | 43 |
 | Measured at | tag `v1.0.0`, before the deposit |
 
 Reproduce it on a machine that holds the file:
 
 ```sh
-sha256sum "Registration Fields Draft.md"   # 73430eeb...
-wc -c < "Registration Fields Draft.md"      # 10809
+sha256sum "Registration Fields Draft.md"   # 9f266e14...
+wc -c < "Registration Fields Draft.md"      # 10958
 ```
 
 Those two values identify the text that matches S1 v1.0.0 — its per-row $\alpha \le .01$,
