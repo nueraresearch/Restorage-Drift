@@ -28,6 +28,26 @@ Each item is a short passage containing one target detail $x^{*}$ that is improb
 
 **Contamination screen.** An item is retained only if the stripped-prompt reconstructions recover $x^{*}$ at or near chance. Items where the model already knows the answer from training data measure recall, not reconstruction, and they are discarded before the loop begins.
 
+### **3.1 The item record and where the set lives**
+
+**Format.** The set is one UTF-8 JSON Lines file, `items.jsonl`, one record per line, keys sorted, no blank lines. Every record carries all of the fields below; a record missing one is invalid rather than defaulted, so the file either matches this schema exactly or fails validation before the loop starts.
+
+| Field | Type | Contents |
+| :---- | :---- | :---- |
+| `item_id` | string | stable identifier, never reused across versions of the set |
+| `passage` | string | the full-text record that enters the loop as $S_0$ |
+| `target` | object | `text` (the span exactly as it appears in `passage`), `start` and `end` (0-based character offsets, end-exclusive), `label` |
+| `candidates` | array of four | `{label, text}` objects in the fixed order the probe presents them; exactly one is the target |
+| `probe` | string | the stripped-prompt question, as sent |
+| `ground_truth` | object | `target_label`, and `prior`: `{q, counts: [four integers], estimator}` from the prior measurement of this section |
+| `strata` | object | `length_tokens`, `b2_position` (`inside`, `outside`, or `na`), `fictional` (boolean), `pair_id` (null or the partner's `item_id`) |
+
+**The probe.** One item, one question, four labels, no passage. `probe` is a single user turn that states the question and lists the four candidate labels in their recorded order, without any text from `passage`. The response is parsed to one of the four labels; an answer matching none of them is recorded as `none` and kept in the denominator, never dropped. The same string is used for prior measurement and for in-loop probing, so a difference between the two measurements is a difference in what the model was shown, not in what it was asked.
+
+**Ground truth is mechanical.** An item's ground truth is its target label together with the target's character span, both fixed at construction and checked by script against `passage`. Nothing is left to a rater's judgement of whether a reconstruction preserves $x^{*}$: $m_n$ is the count of the target label among the $q$ probe responses, and the contamination screen is that same count on the stripped prompt. A response is evidence about the four candidates and nothing else.
+
+**Where the set lives.** The item text is not printed here and is not in this repository. The set is the single file `items.jsonl` in the registration pack that accompanies the preregistration, and the registration records its SHA-256 digest, so "the item set" names one byte sequence rather than a description of one. It is released when the first chain is analysed. Publishing it beside the theory would place the item text in the training data of any model that later reads the repository, which is exactly the contamination the screen above is meant to detect; keeping it in the registration is what keeps that screen meaningful.
+
 ## **4\. Arms**
 
 | Arm | Question it answers | Manipulation |
@@ -127,7 +147,7 @@ $\hat T_A$ is analysed exactly as $T_d$: discrete-time survival, same specificat
 
 Evidence scores are fixed before outcomes are examined, and $\alpha$ is reported alongside them. Because coding is the expensive step while probing is the frequent one, the evidence measure is estimated on a prespecified subsample rather than on every chain: all cycles for three replicates per item and arm-cell, which yields $\hat T_E$ per chain with its precision reported. At 40 items that subsample is 120 coded chains per arm-cell and 720 in total, so the chain count a prediction may use is the coded one rather than the arm's full 400.
 
-The analysis plan, prediction list, item set, and prompts are to be registered before data collection. Because the theory's predictions are specific enough to be fitted after the fact, a study run without prior registration would not test them.
+The analysis plan, prediction list, item set, and prompts are to be registered before data collection, the item set in the form specified in Section 3.1. Because the theory's predictions are specific enough to be fitted after the fact, a study run without prior registration would not test them.
 
 ## **9\. Power, cost, and the minimal slice**
 

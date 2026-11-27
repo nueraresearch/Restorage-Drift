@@ -301,4 +301,13 @@ theory against Section 7 of the protocol.
   review objected that Section 3's examples are not evidence; the closing sentence said
   they "show" the pathways, and now says they illustrate them.
 
-The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 5,206 words / 9 pp (was 5,167).
+- S1 required the item set and prompts to be registered but never said what would be registered,
+  so Section 3.1 now specifies the item record: the JSON Lines schema and its seven fields, the
+  probe as a single stripped-prompt turn over the four candidate labels with unmatched replies
+  kept as `none` in the denominator, and ground truth as a target label plus character span
+  checked by script. The set itself is `items.jsonl` in the registration pack, identified by
+  SHA-256 in the registration and released with the first analysis, for the reason the
+  contamination screen exists: item text in this repository would sit in the training data of
+  any model that later reads it. No item text is included here.
+
+The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 5,700 words / 10 pp (was 5,206 / 9 pp).
