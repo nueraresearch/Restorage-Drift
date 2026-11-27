@@ -232,7 +232,9 @@ theory against Section 7 of the protocol.
   arm runs, and a support line at 280 of 400 could not be reached by any outcome of the
   coded subsample. The line is re-derived at 120 by the same method, Section 7.1 states
   the coded count beside the row, and Section 8 states the subsample size: 120 chains
-  per arm-cell, 720 in total.
+  per arm-cell, 720 in total. The table also lost its two error-rate columns, which
+  hyphenated every row label at the page width; the bounds they carried are now stated
+  in the sentence beneath it.
 - Prediction 5 required terminals within total-variation distance 0.20 of the prior.
   Proposition 3's limit is the tempered prior, and at the theory's own illustrative
   settings that distance is 0.29, so the criterion was unsatisfiable by construction.
@@ -246,5 +248,5 @@ theory against Section 7 of the protocol.
 - Section 9 no longer says the thresholds come from no power calculation. The survival
   claims are the ones without one, and Section 9 says why.
 
-The paper is 6,848 words / 16 pp (was 6,729); S1 is 4,803 words / 9 pp (was 3,943 /
+The paper is 6,848 words / 16 pp (was 6,729); S1 is 4,815 words / 8 pp (was 3,943 /
 7 pp).

@@ -97,12 +97,14 @@ Where the criterion is a hazard ratio the interval decides: a point estimate bel
 
 Every count-based line in Section 7 was fixed before any data by a binomial calculation, not by convention, and each is a three-outcome decision rule. Three quantities are set in advance per prediction: the rate $p_0$ that a system with no effect would produce, the minimum effect $p_1$ worth acting on, and two lines. The pair is chosen so that the support line keeps power at $p_1$ at or above .90 wherever the unit count allows it, the failure line keeps $\beta \leq .10$, both reject $p_0$ at $\alpha \leq .01$, and a band of at least 4% of the units separates them, so that a genuinely ambiguous result is reportable rather than forced to a verdict. The achieved values are given per prediction in the table below, and where a small unit count cannot deliver .90 the table reports the power reached instead. Counts between the two lines are indeterminate.
 
-| Prediction | Units | $p_0$ | $p_1$ | Support | Failure | $\alpha$ | $\beta$ | Power |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 1 Directionality | 40 items | .25 | .75 | $\geq 26$ | $\leq 22$ | $10^{-7}$ | .005 | .95 |
-| 5 Attractor mode | 20 pairs | .25 | .75 | $\geq 14$ | $\leq 9$ | $3 \times 10^{-5}$ | .004 | .79 |
-| 7 Mode sensitivity | 40 items | .50 | .80 | $\geq 28$ | $\leq 23$ | .008 | .001 | .96 |
-| 9 Evidence precedes availability | 120 chains | .27 | .80 | $\geq 90$ | $\leq 84$ | $10^{-27}$ | .006 | .93 |
+| Prediction | $n$ | $p_0$ | $p_1$ | Support | Failure | Power |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| 1 Directionality | 40 | .25 | .75 | 26 | 22 | .95 |
+| 5 Attractor mode | 20 | .25 | .75 | 14 | 9 | .79 |
+| 7 Mode sensitivity | 40 | .50 | .80 | 28 | 23 | .96 |
+| 9 Evidence lag | 120 | .27 | .80 | 90 | 84 | .93 |
+
+$n$ is the number of units — items, pairs, or the coded chains of Prediction 9 — with support a lower bound on the count and failure an upper bound. $\alpha$ never exceeds .008 at a support line and $\beta$ never exceeds .006 at a failure line, both inside the ceilings stated above.
 
 Prediction 9's unit count is the coded subsample, not the arm: 40 items times the three replicates per item and cell that Section 8 codes, so Arm A at $W = 15$ yields 120 chains and not the 400 it runs. An earlier draft set that line at 280 of 400, which no outcome of the coded subsample could reach.
 
