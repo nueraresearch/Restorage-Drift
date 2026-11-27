@@ -5,9 +5,11 @@
     python build.py --skip-figures  # PDFs only
     python build.py --no-sheet      # skip the PNG contact sheet
 
-Steps run in order; the manuscript does not rebuild if the figure step fails.
+Steps run in order; the manuscript does not rebuild if the figure step fails. The metadata
+check runs before anything is built, so a .zenodo.json that would not deposit fails here.
 """
 import hashlib
+import json
 import os
 import re
 import shutil
@@ -20,6 +22,20 @@ ROOT = Path(__file__).resolve().parent
 MANUSCRIPT = ROOT / "Restorage Drift.md"
 PROTOCOL = ROOT / "Iterative-Summarization Protocol.md"
 HEADER = ROOT / "fig-header.tex"
+ZENODO = ROOT / ".zenodo.json"
+
+# Zenodo's controlled vocabularies for the fields below. A value outside them is rejected
+# when the deposit is made, which is a slow way to find out; check_metadata() is the fast one.
+ACCESS_RIGHTS = {"open", "embargoed", "restricted", "closed"}
+UPLOAD_TYPES = {"publication", "poster", "presentation", "dataset", "image", "video",
+                "software", "lesson", "physicalobject", "other"}
+PUBLICATION_TYPES = {"annotationcollection", "book", "section", "conferencepaper",
+                     "datamanagementplan", "article", "patent", "preprint", "deliverable",
+                     "milestone", "proposal", "report", "softwaredocumentation",
+                     "taxonomictreatment", "technicalnote", "thesis", "workingpaper",
+                     "other"}
+ORCID_PATTERN = re.compile(r"^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$")
+ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 # Reproducible PDFs. pdfTeX stamps /CreationDate and /ModDate from the wall clock and
 # derives the trailer /ID partly from the time, so two builds of the same sources
@@ -65,6 +81,65 @@ def normalise_id(pdf):
     return True
 
 
+def check_metadata():
+    """What a Zenodo deposit needs from .zenodo.json, checked here rather than by Zenodo.
+
+    Returns a list of problems; empty means the record would deposit as written. The keys
+    are the legacy deposition fields, which is the dialect .zenodo.json is written in and
+    the one Zenodo's GitHub integration reads, so a stricter reading of some other schema
+    is not a defect this guard should reproduce.
+    """
+    try:
+        meta = json.loads(ZENODO.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return [".zenodo.json is missing"]
+    except json.JSONDecodeError as exc:
+        return [f".zenodo.json is not valid JSON: {exc.msg} at line {exc.lineno} column {exc.colno}"]
+    if not isinstance(meta, dict):
+        return [".zenodo.json must contain a JSON object"]
+
+    problems = []
+    for key in ("title", "description", "publication_date", "access_right", "license", "upload_type"):
+        value = meta.get(key)
+        if not isinstance(value, str) or not value.strip():
+            problems.append(f"{key} is required and must be a non-empty string")
+
+    date = meta.get("publication_date")
+    if isinstance(date, str) and date.strip() and not ISO_DATE.match(date):
+        problems.append(f"publication_date must be YYYY-MM-DD, found {date!r}")
+
+    access = meta.get("access_right")
+    if isinstance(access, str) and access not in ACCESS_RIGHTS:
+        problems.append(f"access_right must be one of {sorted(ACCESS_RIGHTS)}, found {access!r}")
+
+    upload = meta.get("upload_type")
+    if isinstance(upload, str) and upload not in UPLOAD_TYPES:
+        problems.append(f"upload_type must be one of {sorted(UPLOAD_TYPES)}, found {upload!r}")
+
+    publication = meta.get("publication_type")
+    if upload == "publication" and not publication:
+        problems.append("publication_type is required when upload_type is 'publication'")
+    if isinstance(publication, str) and publication not in PUBLICATION_TYPES:
+        problems.append(f"publication_type must be one of {sorted(PUBLICATION_TYPES)}, found {publication!r}")
+
+    creators = meta.get("creators")
+    if not isinstance(creators, list) or not creators:
+        problems.append("creators is required and must be a non-empty list")
+    else:
+        for i, creator in enumerate(creators):
+            if not isinstance(creator, dict):
+                problems.append(f"creators[{i}] must be an object")
+                continue
+            if not str(creator.get("name", "")).strip():
+                problems.append(f"creators[{i}].name is required")
+            orcid = creator.get("orcid")
+            if not isinstance(orcid, str) or not orcid.strip():
+                problems.append(f"creators[{i}].orcid is required: it is what ties the author to the record")
+            elif not ORCID_PATTERN.match(orcid):
+                problems.append(f"creators[{i}].orcid is not an ORCID: {orcid!r}")
+    return problems
+
+
 def page_count(pdf):
     try:
         from pypdf import PdfReader
@@ -90,6 +165,15 @@ def main():
     # Sections 7.1 and 9 each state derived numbers in several places, and four files
     # quote the word counts. Recompute all of it before spending a minute on figures.
     # Page counts need the PDFs, so that part waits until after the build.
+    step("metadata")
+    problems = check_metadata()
+    if problems:
+        for problem in problems:
+            print(f"    - {problem}", file=sys.stderr)
+        print("metadata would not deposit as written - not building", file=sys.stderr)
+        return 1
+    print("    .zenodo.json: required fields present")
+
     step("derived numbers")
     rc = run([sys.executable, ROOT / "check_thresholds.py", "--skip-pages"])
     if rc.returncode != 0:

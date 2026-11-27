@@ -320,4 +320,12 @@ theory against Section 7 of the protocol.
   separate scripts record was considered and rejected, since the deposit is the tag tree
   and the scripts would stay inside the paper's archive either way.
 
+- .zenodo.json was the last derived artifact with no guard, and two reviews reported it
+  broken when it was valid. `build.py` now checks it before anything is built: it must
+  parse; it must carry title, description, publication_date, access_right, license and
+  upload_type, plus publication_type when upload_type is publication; the date must be
+  ISO, access and type must be in Zenodo's controlled vocabularies, and every creator
+  must have a name and a well-formed ORCID. Nine mutations each stop the build with the
+  field named.
+
 The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 5,700 words / 10 pp (was 5,206 / 9 pp).
