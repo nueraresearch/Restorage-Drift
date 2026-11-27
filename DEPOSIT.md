@@ -1,53 +1,50 @@
 # Deposit record
 
 What was checked before this release could be deposited, how, and what a reviewer can
-re-run. Every figure names the commit it belongs to, so it can be checked against Git
+re-run. Every figure names the tree it belongs to, so it can be checked against Git
 rather than against a page that may have been cached.
 
 ## The source archive
 
 Zenodo archives a release's Git tree: the tracked files at the tag, without `.git` and
-without anything untracked or ignored. The dry run measured that tree at `a4f130d`, where
-it held **20 files, 1,719,125 bytes**:
+without anything untracked or ignored. This release's tree is **21 files,
+1,803,809 bytes**:
 
 | File | Bytes |
 | :---- | ----: |
 | `.gitattributes` | 114 |
 | `.gitignore` | 455 |
-| `.zenodo.json` | 1,881 |
-| `CHANGELOG.md` | 21,036 |
-| `Iterative-Summarization Protocol.docx` | 25,829 |
-| `Iterative-Summarization Protocol.md` | 33,868 |
-| `Iterative-Summarization Protocol.pdf` | 260,670 |
-| `LICENSE` | 2,611 |
-| `README.md` | 6,101 |
-| `RELEASE_NOTES.md` | 2,797 |
-| `Restorage Drift.docx` | 320,655 |
-| `Restorage Drift.md` | 49,551 |
-| `Restorage Drift.pdf` | 641,138 |
-| `build.py` | 4,923 |
-| `check_thresholds.py` | 22,171 |
+| `.zenodo.json` | 2,223 |
+| `CHANGELOG.md` | 30,512 |
+| `DEPOSIT.md` | 6,295 |
+| `Iterative-Summarization Protocol.docx` | 29,660 |
+| `Iterative-Summarization Protocol.md` | 39,009 |
+| `Iterative-Summarization Protocol.pdf` | 267,272 |
+| `LICENSE` | 3,009 |
+| `README.md` | 6,453 |
+| `RELEASE_NOTES.md` | 3,132 |
+| `Restorage Drift.docx` | 321,192 |
+| `Restorage Drift.md` | 50,028 |
+| `Restorage Drift.pdf` | 663,613 |
+| `build.py` | 10,922 |
+| `check_thresholds.py` | 44,595 |
 | `fig-header.tex` | 200 |
 | `figures/fig1-cycle.png` | 115,158 |
 | `figures/fig2-drift.png` | 189,954 |
 | `figures/make_figures.py` | 12,184 |
 | `make_docx.py` | 7,829 |
-| **Total** | **1,719,125** |
+| **Total** | **1,803,809** |
 
 Reproduce the count and the total:
 
 ```sh
-git ls-tree -r --long a4f130d | awk '{n++; s+=$4} END {print n, s}'
+git ls-tree -r --long v1.0.0 | awk '{n++; s+=$4} END {print n, s}'
 ```
 
-That command needs the commit object, so run it in a full clone, or `git fetch origin
-a4f130d` first: a shallow clone carries only the tag's tip.
-
-Two later commits moved the total without changing the file list: `LICENSE` was rewritten
-for the single-licence framing and `build.py` gained the metadata check. At `4164565` the
-same 20 files total 1,725,436 bytes. This record is one further file, so the tag that
-contains it holds 21; `git ls-tree -r --long v1.0.0` prints that total, and the table above
-is the measurement the dry run reported.
+The row for `DEPOSIT.md` is this file's own size in the tree, so the table and the total
+include the page that reports them. Line endings are fixed by `.gitattributes`, so the
+bytes an archive holds are the bytes a checkout holds; a working copy converted to CRLF
+would print more and is not what Zenodo receives.
 
 ## What is not in it, and how that was shown
 
@@ -61,8 +58,8 @@ The exclusion was checked against the Git index, not against the ignore rules. A
 added, so it cannot certify absence; these commands can:
 
 ```sh
-git ls-tree -r --name-only a4f130d | grep -icE 'study\.(md|pdf|docx)|registration fields'
-git ls-tree -r --name-only a4f130d | grep -icE '\.(aux|log|out|toc|synctex\.gz|pyc)$|__pycache__|\.tmp_'
+git ls-tree -r --name-only v1.0.0 | grep -icE 'study\.(md|pdf|docx)|registration fields'
+git ls-tree -r --name-only v1.0.0 | grep -icE '\.(aux|log|out|toc|synctex\.gz|pyc)$|__pycache__|\.tmp_'
 git ls-files --others --exclude-standard
 ```
 
@@ -81,16 +78,16 @@ reader cannot obtain it from the DOI. What this record can do is name it by cont
 | | |
 | :---- | :---- |
 | File | `Registration Fields Draft.md` |
-| SHA-256 | `313091d29dff04b1a0e166783ba330445a72aa4666f6852302ef01e3a91e4c50` |
-| Bytes | 10,684 |
+| SHA-256 | `2326ff6aac2251c27622f4d67dcfdaedf2233fbe965625b3a566e8f1321367a8` |
+| Bytes | 10,775 |
 | Lines | 43 |
 | Measured at | tag `v1.0.0`, before the deposit |
 
 Reproduce it on a machine that holds the file:
 
 ```sh
-sha256sum "Registration Fields Draft.md"   # 313091d2...
-wc -c < "Registration Fields Draft.md"      # 10684
+sha256sum "Registration Fields Draft.md"   # 2326ff6a...
+wc -c < "Registration Fields Draft.md"      # 10775
 ```
 
 Those two values identify the text that matches S1 v1.0.0 — its per-row $\alpha \le .01$,

@@ -68,9 +68,12 @@ NUMBER_WORDS = {w: n for n, w in enumerate(
     "fifteen sixteen seventeen eighteen nineteen twenty".split())}
 
 ROWS = [
-    {"key": "1", "label": "1 Directionality", "n": ITEMS, "p0": 0.25, "p1": 0.75,
-     "support": 26, "failure": 22,
-     "text": ["at least 26 of 40 items", "at most 22 of 40"]},
+    # Prediction 1's null is the mode contest at .5, not the four-way draw at .25: a system that
+    # lost the detail still picks among four candidates, and may prefer the prior's mode for
+    # reasons the re-storage mechanism did not cause. At .5 the old 26-of-40 line sat at .040.
+    {"key": "1", "label": "1 Directionality", "n": ITEMS, "p0": 0.50, "p1": 0.75,
+     "support": 28, "failure": 23,
+     "text": ["at least 28 of 40 items", "at most 23 of 40"]},
     {"key": "5a", "label": "5a Attractor mode", "n": PAIRS, "p0": 0.25, "p1": 0.75,
      "support": 14, "failure": 9,
      "text": ["at least 14 of the 20 pairs", "At most 9 of 20"]},
@@ -90,6 +93,11 @@ BETA_CEILING = 0.10
 HOLM_FWER = 0.05         # family-wise error the four confirmatory hypotheses are held to
 MIN_BAND = 0.04          # the note promises a band of at least 4% of the units
 LOG_TOLERANCE = 0.05     # ~12% in ratio terms, for values quoted to two figures
+# The 7.1 correction paragraph quotes its alphas to two significant figures (8.3e-3 for
+# 8.294e-3), so half a unit in the last quoted digit is well under 1%. The table's own
+# tolerance is a tenth of a decade, which is too wide here: at 12% a quoted 9.3e-3 would
+# pass against a computed 8.29e-3, and that sentence is a claim about the line's size.
+ALPHA_QUOTE_TOLERANCE = 0.01
 
 NOTE_MARKER = "The error rates behind each line, by row:"
 NOTE_END = "stated above."
@@ -505,6 +513,39 @@ DRAFT_STRUCTURAL = (
 )
 
 
+# The text this record is built from. Binary artifacts are excluded on purpose: a .pdf and
+# a .docx carry control bytes legitimately.
+TEXT_FILES = (
+    "Restorage Drift.md", "Iterative-Summarization Protocol.md", "CHANGELOG.md",
+    "DEPOSIT.md", "README.md", "RELEASE_NOTES.md", ".zenodo.json", ".gitignore",
+    ".gitattributes", "LICENSE", "build.py", "check_thresholds.py", "make_docx.py",
+    "fig-header.tex", "figures/make_figures.py",
+)
+
+
+def check_no_control_characters() -> list[str]:
+    """No stray control bytes in the prose this release is built from.
+
+    A backslash typed inside a heredoc can arrive as the character it names - ``\\a`` is
+    0x07 - and the damage is invisible in a diff, survives a read of the paragraph, and
+    surfaces only in the built file, where LaTeX refuses it. Repairing the bytes is not
+    enough: this is what stops the next edit from writing them again.
+    """
+    out: list[str] = []
+    for name in TEXT_FILES:
+        path = ROOT / name
+        if not path.exists():
+            continue
+        # A tab belongs in Python indentation and nowhere in prose. Allowing 0x09 in the
+        # first version of this check is what hid the second casualty: ``\times`` had
+        # become ``<TAB>imes`` and passed as "no control bytes".
+        allowed = {0x0A, 0x09} if name.endswith(".py") else {0x0A}
+        bad = sorted({b for b in path.read_bytes() if b < 0x20 and b not in allowed})
+        if bad:
+            out.append(f"{name}: control byte(s) {', '.join(hex(b) for b in bad)}")
+    return out
+
+
 def check_registration_draft() -> list[str]:
     """Hold the registration draft's figures to the protocol, when the draft is here.
 
@@ -544,6 +585,23 @@ def check_registration_draft() -> list[str]:
             out.append(f"DEPOSIT.md: records {found.group(1)} bytes for the draft, "
                        f"the file is {size:,}")
 
+        # The reproduce block prints the same two values as comments a reader is meant to
+        # compare against. They drifted once while the table above them was correct, so
+        # they are held to the file as well.
+        m = re.search(r'sha256sum "Registration Fields Draft\.md"\s+# ([0-9a-f]{8})',
+                      recorded)
+        if not m:
+            out.append("DEPOSIT.md: the reproduce block no longer prints the digest")
+        elif not digest.startswith(m.group(1)):
+            out.append(f"DEPOSIT.md: the reproduce block prints {m.group(1)}..., "
+                       f"the file hashes to {digest[:8]}...")
+        m = re.search(r'wc -c < "Registration Fields Draft\.md"\s+# (\d+)', recorded)
+        if not m:
+            out.append("DEPOSIT.md: the reproduce block no longer prints the byte count")
+        elif int(m.group(1)) != size:
+            out.append(f"DEPOSIT.md: the reproduce block prints {m.group(1)} bytes, "
+                       f"the file is {size:,}")
+
     def take(label: str, pattern: str) -> list[str] | None:
         nonlocal masked
         m = re.search(pattern, draft)
@@ -579,8 +637,10 @@ def check_registration_draft() -> list[str]:
     same("the beta ceiling", r"keeps \$\\beta \\leq (\.\d+)", f"{BETA_CEILING:.2f}"[1:])
     same("the largest alpha", r"largest achieved \$\\alpha\$ is (\.\d+)",
          f"{max_alpha:.4f}"[1:], tol=5e-5)
+    # The note quotes the maxima to three decimals and the draft follows it, so that is
+    # the precision this pair is held to; the old value is far outside it either way.
     same("the largest beta", r"largest \$\\beta\$ is (\.\d+)",
-         f"{max_beta:.4f}"[1:], tol=5e-5)
+         f"{max_beta:.4f}"[1:], tol=5e-4)
 
     # 2. the correction: four steps, one family, and who is outside it
     steps = take("the Holm thresholds",
@@ -814,9 +874,47 @@ def main() -> int:
         problems.append(f"note: largest beta is {max_beta:.3g}, "
                         f"the note says {m.group(0) if m else 'nothing'}")
 
-    # 6. the bound Prediction 1 states inline
-    if r"\alpha < 10^{-6}" in text and not derived(ROWS[0])["alpha"] < 1e-6:
-        problems.append("prediction 1: the inline alpha bound does not hold")
+    # 6. Prediction 1's no-effect rate and the alpha it states against it. The four-way floor is
+    #    not restated in P1: it is 5a's null, and a second inline value is a second thing to keep
+    #    in step for no decision it changes.
+    p1_line = next((ln for ln in text.splitlines() if ln.startswith("1. **Directionality.**")), "")
+    if "The no-effect rate is one half" not in p1_line:
+        problems.append("prediction 1: the no-effect rate is not stated as one half")
+    inline = re.findall(r"\\alpha = ([0-9.]+) \\times 10\^\{(-?\d+)\}", p1_line)
+    if len(inline) != 1:
+        problems.append(f"prediction 1: expected one inline alpha, found {len(inline)}")
+    elif not matches("point", derived(ROWS[0])["alpha"],
+                     float(inline[0][0]) * 10 ** int(inline[0][1])):
+        problems.append(f"prediction 1: inline alpha reads {inline[0][0]}e{inline[0][1]}, "
+                        f"computes {derived(ROWS[0])['alpha']:.3g}")
+
+    # 6b. the paragraph in 7.1 that explains the correction. It went unchecked until two
+    #     stray control bytes passed every test, and it quotes two alphas at the same null:
+    #     the old 26-of-40 line, which did not hold, and the 28-of-40 line that replaced it.
+    para = next((ln for ln in text.splitlines()
+                 if ln.startswith("**Prediction 1's no-effect rate was the wrong one.**")), "")
+    if not para:
+        problems.append("7.1: the Prediction 1 correction paragraph is missing")
+    else:
+        if "one half" not in para:
+            problems.append("7.1: the correction paragraph no longer names the no-effect rate")
+        for claim in ("26 of 40", "28 of 40"):
+            if claim not in para:
+                problems.append(f"7.1: the correction paragraph no longer quotes {claim}")
+        quoted = []
+        for m in re.finditer(r"\\alpha = ", para):
+            token = TOKEN.match(para, m.end())
+            if token:
+                quoted.append(numbers(token.group(0))[0][1])
+        if len(quoted) != 2:
+            problems.append(f"7.1: expected two inline alphas in the correction paragraph, "
+                            f"found {len(quoted)}")
+        else:
+            for got, k in zip(quoted, (26, 28)):
+                want = ge(ITEMS, 0.5, k)
+                if got <= 0 or abs(math.log10(want / got)) > ALPHA_QUOTE_TOLERANCE:
+                    problems.append(f"7.1: the alpha for {k} of 40 reads {got:.3g}, "
+                                    f"computes {want:.3g}")
 
     # 7. the design facts the unit counts rest on
     for anchor in ("three replicates per item and arm-cell",
@@ -827,6 +925,7 @@ def main() -> int:
     problems.extend(check_multiplicity(text))
     problems.extend(check_screen(text))
     problems.extend(check_costs(text))
+    problems.extend(check_no_control_characters())
     problems.extend(check_registration_draft())
     problems.extend(check_quotes("--skip-pages" not in flags))
 

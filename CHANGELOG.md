@@ -10,7 +10,7 @@ Initial release. Theory paper plus Supplementary Material S1. No empirical data.
 
 ### Paper
 
-- Theory paper at 16 pp, 6,729 words, within a 7,500-word limit.
+- Theory paper at 17 pp, 7,002 words, within a 7,500-word limit.
 - Abstract, keywords, falsifiability conditions, open research questions,
   declarations, and 19 references.
 
@@ -406,4 +406,37 @@ theory against Section 7 of the protocol.
   files to each other, so S1's status as a supplement is carried by the file list and the
   description; the version relation to the DOI-bearing release belongs on v1.0.1.
 
-The paper is 7,002 words / 17 pp (was 6,925 / 17 pp); S1 is 6,219 words / 11 pp (was 6,061 / 10 pp).
+### Probe-proxy and Prediction 1 null correction (27 November 2026, before deposit)
+
+- Prediction 1's no-effect rate was the four-way floor of .25, which is Prediction 5a's
+  null: there the mode contest is against all four candidates. Prediction 1 compares the
+  terminal mode with x* alone, so a system that lost the detail still chooses among four
+  candidates and may prefer the prior's mode for reasons that do not involve re-storage.
+  The null is one half, a contest between the prior's mode and the target, and the line
+  moves from 26 of 40 against 22 to 28 of 40 against 23. The old line rejected .5 at
+  .040, outside the .01 ceiling; the new one rejects it at 8.3e-3, with failure at 23.
+  Power falls from .95 to .82 at p1 = .75, which is what forty items buy at this null.
+  Arm B1 is named as the reported empirical check rather than as the anchor, because a
+  confirmatory line cannot be set from data the study has not collected.
+- Section 6 now says what the probe measures. m_n is a distribution of answers under one
+  fixed procedure applied to a stored text, while S_n is a distribution over candidates
+  internal to the system; the two coincide only if the text is doing the work the theory
+  attributes to it, which is what Prediction 9 tests. Every verdict in Section 7 is
+  therefore a claim about response behaviour given the stored text, and none of them is
+  a claim about the model's internal state. Prediction 1's wording is narrowed to the
+  probe's modal answer for the same reason.
+- The four-way floor is no longer reported as a second significance level beside the
+  null. It changed no decision, and it duplicated 5a's null; a second inline alpha is a
+  second number to keep in step. Section 7.1's rationale was rewritten shorter, and the
+  null-behaviour and failure-line paragraphs were reworded to match the one-half rule.
+- The checker gained three guards, each mutation-tested against a deliberately broken
+  input. It rejects any control byte in the prose: two heredoc casualties in the same
+  paragraph (`\a` arriving as 0x07 where `\alpha` was meant, and `\t` arriving as 0x09
+  inside `\times`) each survived a reading of the text, and one survived a first byte
+  scan that still allowed tabs. It recomputes both inline alphas in 7.1's correction
+  paragraph at the .5 null, at 2% rather than the 12% used for table values, since a
+  quoted 9.3e-3 would otherwise pass against a computed 8.29e-3. It also holds
+  `DEPOSIT.md`'s reproduce block to the draft it prints, not just the table above it,
+  where the two had drifted apart.
+
+The paper is 7,002 words / 17 pp (was 6,925 / 17 pp); S1 is 6,601 words / 11 pp (was 6,061 / 10 pp).
