@@ -247,6 +247,16 @@ theory against Section 7 of the protocol.
   Holm-adjusted; nothing else is adjusted across predictions.
 - Section 9 no longer says the thresholds come from no power calculation. The survival
   claims are the ones without one, and Section 9 says why.
+- Prediction 5 scored two clauses on one line set carrying one no-effect rate, which is
+  correct only for the mode clause: the ordering clause is not a Bernoulli event with a
+  chance rate of one in four, so its alpha was meaningless as written. Section 7.1 now
+  carries two rows, the mode clause anchored at .25 (a terminal mode among four
+  candidates) and the ordering clause at 1/3 (the rate exchangeability gives the
+  smallest of three pairwise distances when a pair's distributions share nothing), both
+  on the 14-of-20 line: alpha 3e-5 and 9e-4, power .79 for each. Support requires both,
+  so the prediction's error rate is no larger than either and nothing is adjusted
+  between them; a split verdict is reported as indeterminate rather than as partial
+  support.
 
-The paper is 6,848 words / 16 pp (was 6,729); S1 is 4,815 words / 8 pp (was 3,943 /
+The paper is 6,848 words / 16 pp (was 6,729); S1 is 5,090 words / 9 pp (was 3,943 /
 7 pp).
