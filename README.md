@@ -33,7 +33,7 @@ What this paper claims is narrower. It separates three things that a single meas
 
 ## Held outside this record
 
-Two working documents are not in this repository and not in the archived release, so the DOI covers neither:
+Two working documents are in neither this repository nor its `v1.0.0` tag:
 
 - `Human Restorage Study.*` — human-study design, v1.2. Uncited by the paper; its own header says it is not a supplement.
 - `Registration Fields Draft.md` — draft OSF preregistration fields extracted from S1. Its bracketed thresholds have not been justified; do not register as-is.
@@ -73,9 +73,9 @@ S1 specifies the test. Two of its arms are controls the framework cannot survive
 
 ## Citation
 
-Cite the archived version, not this repository. A DOI will be added here when the preprint is posted; until then, cite as:
+The current public version is this repository, at tag `v1.0.0`. No archived copy exists and no DOI has been minted, so cite the repository and the tag rather than a deposit; a DOI will be added here if one is created. Cite as:
 
-> Beebe, J.B.T. (2026). *Restorage Drift: A Theory of Information State Evolution Under Repeated Compression and Reconstruction* (Version 1.0.0) [Preprint].
+> Beebe, J.B.T. (2026). *Restorage Drift: A Theory of Information State Evolution Under Repeated Compression and Reconstruction* (Version 1.0.0) [Preprint]. https://github.com/nueraresearch/Restorage-Drift/tree/v1.0.0
 
 ## Licence
 
