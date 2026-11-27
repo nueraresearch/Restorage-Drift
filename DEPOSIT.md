@@ -8,21 +8,21 @@ rather than against a page that may have been cached.
 
 Zenodo archives a release's Git tree: the tracked files at the tag, without `.git` and
 without anything untracked or ignored. This release's tree is **22 files,
-1,845,521 bytes**:
+1,847,778 bytes**:
 
 | File | Bytes |
 | :---- | ----: |
 | `.gitattributes` | 114 |
 | `.gitignore` | 455 |
 | `.zenodo.json` | 2,222 |
-| `CHANGELOG.md` | 40,616 |
+| `CHANGELOG.md` | 41,537 |
 | `DEPOSIT.md` | 6,333 |
-| `Iterative-Summarization Protocol.docx` | 31,903 |
-| `Iterative-Summarization Protocol.md` | 44,271 |
-| `Iterative-Summarization Protocol.pdf` | 273,045 |
+| `Iterative-Summarization Protocol.docx` | 31,983 |
+| `Iterative-Summarization Protocol.md` | 44,448 |
+| `Iterative-Summarization Protocol.pdf` | 273,793 |
 | `LICENSE` | 3,009 |
-| `README.md` | 6,453 |
-| `RELEASE_NOTES.md` | 3,132 |
+| `README.md` | 6,623 |
+| `RELEASE_NOTES.md` | 3,293 |
 | `Restorage Drift.docx` | 321,243 |
 | `Restorage Drift.md` | 50,120 |
 | `Restorage Drift.pdf` | 664,538 |
@@ -34,7 +34,7 @@ without anything untracked or ignored. This release's tree is **22 files,
 | `figures/make_figures.py` | 12,184 |
 | `make_docx.py` | 7,829 |
 | `tests/mutation_check.py` | 7,256 |
-| **Total** | **1,845,521** |
+| **Total** | **1,847,778** |
 
 Reproduce the count and the total:
 
@@ -79,16 +79,16 @@ reader cannot obtain it from the DOI. What this record can do is name it by cont
 | | |
 | :---- | :---- |
 | File | `Registration Fields Draft.md` |
-| SHA-256 | `7fc7b458f787b35363e385f0de63586cc19f6c1c80f67415576d2f5aa51a6f00` |
-| Bytes | 11,465 |
+| SHA-256 | `993e5746c12db29efd985166d69ec11922f07e5f7aeffb57f005fbd43363014e` |
+| Bytes | 11,632 |
 | Lines | 43 |
 | Measured at | tag `v1.0.0`, before the deposit |
 
 Reproduce it on a machine that holds the file:
 
 ```sh
-sha256sum "Registration Fields Draft.md"   # 7fc7b458...
-wc -c < "Registration Fields Draft.md"      # 11465
+sha256sum "Registration Fields Draft.md"   # 993e5746...
+wc -c < "Registration Fields Draft.md"      # 11632
 ```
 
 Those two values identify the text that matches S1 v1.0.0 — its per-row $\alpha \le .01$,

@@ -558,6 +558,19 @@ theory against Section 7 of the protocol.
   per-chain answers; it was replaced before deposit for exactly that reason. The checker holds
   the sentence to the replicate count the design runs.
 
+- `README.md` and `RELEASE_NOTES.md` called the chain-exclusion threshold open while the entry
+  above said the exclusion rule had gained five clauses. Both were partly right, which is the
+  worst way to be right: the *rules* are now fixed — five objective clauses, three redraws,
+  and no rule added after the first chain — while the *share* of excluded chains at which an
+  arm is declared compromised is still a proposal. All three documents, the draft included,
+  now say which is which.
+
+- S1 3.1 referred to "the construction standard" without naming it, so a reader holding the
+  registration could not resolve the reference that fixes item generation. It now names the
+  pack's `Item-Construction Standard.md`, states what that document fixes — target selection,
+  rival construction, the B2 strata, pairing and record validity — and says it travels with
+  the preregistration beside the set's manifest.
+
 - Probe sampling error was described but not carried into the analysis. Every measurement
   records the q actually drawn, T_d is re-derived on the 20-draw subset alone, and a T_d that
   moves under that re-derivation is reported as a boundary case rather than a stable
@@ -580,4 +593,4 @@ theory against Section 7 of the protocol.
   samples after three redraws, and a recorded protocol violation - requires the clause that
   excluded each chain to be recorded, and forbids adding a rule after the first chain runs.
 
-The paper is 7,015 words / 17 pp (was 6,925 / 17 pp); S1 is 7,487 words / 12 pp (was 6,061 / 10 pp).
+The paper is 7,015 words / 17 pp (was 6,925 / 17 pp); S1 is 7,508 words / 12 pp (was 6,061 / 10 pp).
