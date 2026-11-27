@@ -14,7 +14,11 @@ number written into the document cannot drift from the arithmetic behind it. The
 too, so changing a replicate count in one place and not the other fails the check.
 
 The word and page counts are checked the same way, against README, CHANGELOG,
-RELEASE_NOTES and .zenodo.json. Pages come from the built PDFs, so build.py runs this
+RELEASE_NOTES and .zenodo.json.
+
+The OSF registration draft is working material that is deliberately kept out of the
+repository, so nothing else can see it drift from the protocol. check_registration_draft()
+regenerates its figures from the same constants and runs only when the file is present. Pages come from the built PDFs, so build.py runs this
 once before building (with --skip-pages, since the PDFs are about to be replaced) and
 again afterwards to compare what was actually produced.
 """
@@ -82,6 +86,7 @@ ROWS = [
 
 ALPHA_CEILING = 0.01
 BETA_CEILING = 0.10
+HOLM_FWER = 0.05         # family-wise error the four confirmatory hypotheses are held to
 MIN_BAND = 0.04          # the note promises a band of at least 4% of the units
 LOG_TOLERANCE = 0.05     # ~12% in ratio terms, for values quoted to two figures
 
@@ -180,6 +185,11 @@ def cost_rows(text: str) -> dict[str, list[str]]:
     return rows
 
 
+def holm_steps(fwer: float = HOLM_FWER, members: int = 4) -> list[str]:
+    """The Holm thresholds, derived rather than typed: .0125, .0167, .025, .05."""
+    return [f"{fwer / (members - i):.4f}"[1:].rstrip("0").rstrip(".") for i in range(members)]
+
+
 def check_multiplicity(text: str) -> list[str]:
     """Holm over the four confirmatory hypotheses: the step thresholds are arithmetic.
 
@@ -187,8 +197,8 @@ def check_multiplicity(text: str) -> list[str]:
     are derived here, so a hand-edited step, a family that silently gains a member, or a
     table that forgets the correction cannot pass.
     """
-    fwer, members = 0.05, 4
-    steps = [f"{fwer / (members - i):.4f}"[1:].rstrip("0").rstrip(".") for i in range(members)]
+    fwer, members = HOLM_FWER, 4
+    steps = holm_steps(fwer, members)
     out = []
 
     # Scope to the rule's own paragraph: a step quoted anywhere else in the protocol is not
@@ -468,6 +478,236 @@ def check_quotes(include_pages: bool) -> list[str]:
     return out
 
 
+# --- the registration draft ----------------------------------------------------------
+# Working material, untracked and outside the archive, so no other check sees it. It has
+# drifted from S1 twice: an alpha of .05 where the protocol says .01, and a Holm family
+# of nine where the protocol has four. Every figure below is regenerated from the
+# constants that hold the protocol (ROWS, MINIMAL_ITEMS, ITEMS, the Section 9 design),
+# and every number the draft states must be claimed by one of the rules here - a number
+# no rule claims is itself an error, which is what catches a third drift being written
+# in rather than merely repeated.
+DRAFT = ROOT / "Registration Fields Draft.md"
+
+# Section references and version strings are not figures. They are masked before the
+# coverage pass, so only numbers making a claim have to survive it.
+DRAFT_STRUCTURAL = (
+    r"Sections? 1–9",
+    r"Sections? \d+(?:\.\d+)?(?:, \d+(?:\.\d+)?)*(?: and \d+(?:\.\d+)?)?",
+    r"v\d+\.\d+\.\d+",
+    r"\d+ November \d{4}",
+    r"SHA-256",
+    r"5a|5b",
+    r"Prediction \d+",
+    r"items\.jsonl",
+    r"\bS1\b",
+)
+
+
+def check_registration_draft() -> list[str]:
+    """Hold the registration draft's figures to the protocol, when the draft is here.
+
+    The draft is gitignored and absent from a clean clone, so a missing file is a skip
+    with a note rather than a failure: the deposit must still build on a machine that does
+    not have the author's working files. When it is present, every number it states is
+    either checked against a constant the protocol is also held to, or reported.
+    """
+    if not DRAFT.exists():
+        print("    (registration draft absent - skipped; it is not part of the archive)")
+        return []
+    draft = DRAFT.read_text(encoding="utf-8")
+    protocol = PROTOCOL.read_text(encoding="utf-8")
+    out: list[str] = []
+    masked = draft
+    rows = {r["key"]: r for r in ROWS}
+
+    def take(label: str, pattern: str) -> list[str] | None:
+        nonlocal masked
+        m = re.search(pattern, draft)
+        masked = re.sub(pattern, " ", masked)
+        if not m:
+            out.append(f"draft: {label} was not found")
+            return None
+        return list(m.groups()) or [m.group(0)]
+
+    def same(label: str, pattern: str, want: str, tol: float | None = None) -> None:
+        got = take(label, pattern)
+        if got is None:
+            return
+        value = got[0]
+        if tol is None:
+            if value != want:
+                out.append(f"draft: {label} reads {value!r}, the protocol gives {want!r}")
+            return
+        try:
+            seen = float(value.replace(",", ""))
+        except ValueError:
+            out.append(f"draft: {label} reads {value!r}, which is not a number")
+            return
+        if abs(seen - float(want.replace(",", ""))) > tol:
+            out.append(f"draft: {label} reads {value}, the protocol gives {want}")
+
+    max_alpha = max(derived(r)["alpha"] for r in ROWS)
+    max_beta = max(derived(r)["beta"] for r in ROWS)
+
+    # 1. the error ceilings, and the maxima Section 7.1's note reports
+    same("the per-row alpha ceiling", r"no-effect rate at \$\\alpha \\leq (\.\d+)",
+         f"{ALPHA_CEILING:.2f}"[1:])
+    same("the beta ceiling", r"keeps \$\\beta \\leq (\.\d+)", f"{BETA_CEILING:.2f}"[1:])
+    same("the largest alpha", r"largest achieved \$\\alpha\$ is (\.\d+)",
+         f"{max_alpha:.4f}"[1:], tol=5e-5)
+    same("the largest beta", r"largest \$\\beta\$ is (\.\d+)",
+         f"{max_beta:.4f}"[1:], tol=5e-5)
+
+    # 2. the correction: four steps, one family, and who is outside it
+    steps = take("the Holm thresholds",
+                 r"compared with (\.\d+), then (\.\d+), (\.\d+) and (\.\d+)")
+    if steps is not None and steps != holm_steps():
+        out.append(f"draft: the Holm thresholds read {', '.join(steps)}, "
+                   f"the protocol's family of four gives {', '.join(holm_steps())}")
+    level = f"{HOLM_FWER:.2f}"[1:]
+    same("the family-wise error", r"family-wise \$\\alpha = (\.\d+)\$", level)
+    if f"family-wise error at {level}" not in protocol:
+        out.append("Section 7: the multiplicity rule no longer holds the family-wise "
+                   f"error at {level}")
+    fam = take("the family's membership",
+               r"one family of four hypotheses — (\d+), (\d+), (\d+) and (\d+)")
+    members = sorted({r["key"][0] for r in ROWS})
+    if fam is not None and list(fam) != members:
+        out.append(f"draft: the family is listed as {'/'.join(fam)}, "
+                   f"the count-based rows are {'/'.join(members)}")
+    for phrase in (r"intersection-union",
+                   r"Predictions 2, 3 and 6 are decided by hazard ratios",
+                   r"4 and 8 are tolerance lines"):
+        if not re.search(phrase, draft):
+            out.append(f"draft: the correction's scope lost {phrase!r}")
+        masked = re.sub(phrase, " ", masked)
+
+    # 3. the five count lines, parsed as claims and compared to the rows themselves
+    start = draft.find("**Criteria in counts.**")
+    para = draft[start:draft.find("\n\n", start)] if start != -1 else ""
+    if not para:
+        out.append("draft: the criteria-in-counts paragraph was not found")
+    else:
+        expected = {"1": rows["1"], "5": rows["5a"], "7": rows["7"], "9": rows["9"]}
+        if (rows["5a"]["support"], rows["5a"]["n"]) != (rows["5b"]["support"], rows["5b"]["n"]):
+            out.append("draft: Prediction 5 is quoted as one line, but 5a and 5b differ")
+        body = para.split(":", 1)[1] if ":" in para else ""
+        seen: set[str] = set()
+        for part in re.split(r";\s*(?=Prediction )", body):
+            key = re.search(r"Prediction (\d+)", part)
+            if key is None:
+                continue
+            k = key.group(1)
+            seen.add(k)
+            row = expected.get(k)
+            if row is None:
+                out.append(f"draft: the counts paragraph quotes Prediction {k}, "
+                           f"which is not one of the five count-based rows")
+                continue
+            nums = re.search(r"(\d+) of (?:the )?(\d+)", part)
+            fail = re.search(r"(\d+) or fewer", part)
+            if nums is None or fail is None:
+                out.append(f"draft: the line for Prediction {k} has no support or failure count")
+                continue
+            if (int(nums.group(1)), int(nums.group(2))) != (row["support"], row["n"]):
+                out.append(f"draft: Prediction {k} support reads {nums.group(1)} of "
+                           f"{nums.group(2)}, the protocol has {row['support']} of {row['n']}")
+            if int(fail.group(1)) != row["failure"]:
+                out.append(f"draft: Prediction {k} failure reads {fail.group(1)}, "
+                           f"the protocol has {row['failure']}")
+        for k in sorted(set(expected) - seen):
+            out.append(f"draft: Prediction {k} is missing from the counts paragraph")
+        masked = masked.replace(para, " ")
+
+    # 4. the design: slice size, full run, and the range of unit counts
+    word = take("the minimal slice's item count", r"minimal slice is (\w+) items")
+    if word is not None:
+        spelled = NUMBER_WORDS.get(word[0])
+        if spelled is None:
+            out.append(f"draft: cannot read the slice size {word[0]!r}")
+        elif spelled != MINIMAL_ITEMS:
+            out.append(f"draft: the minimal slice is {word[0]} items, "
+                       f"Section 9 makes it {MINIMAL_ITEMS}")
+    same("the full run's item count", r"(\d+)-item full run", str(ITEMS))
+    span = take("the range of unit counts", r"count on (\d+) to (\d+) units")
+    if span is not None:
+        want = (str(min(r["n"] for r in ROWS)), str(max(r["n"] for r in ROWS)))
+        if tuple(span) != want:
+            out.append(f"draft: the unit counts span {span[0]} to {span[1]}, "
+                       f"the protocol's rows run {want[0]} to {want[1]}")
+
+    # 5. the ceiling a Holm step is compared against, the interval level, the binomial
+    same("the ceiling clearing a Holm step is compared against",
+         r"clearing (\.\d+) but not its step", f"{ALPHA_CEILING:.2f}"[1:])
+    same("the interval level", r"with (\d+)% intervals", "95")
+    if "95% intervals" not in draft:
+        out.append("draft: the 95% interval level is stated without its scope")
+    binom = take("the screen's binomial", r"Binomial\}\((\d+), 1/(\d+)\)")
+    if binom is not None and (int(binom[0]), int(binom[1])) != (Q_BASE, 4):
+        out.append(f"draft: the screen is modelled as Binomial({binom[0]}, 1/{binom[1]}), "
+                   f"Section 3 uses Binomial({Q_BASE}, 1/4)")
+
+    # 6. the uniformity p the slice paragraph quotes, and the probe extension
+    same("the four-item unanimity p", r"gives \$p = (\.\d+)\$",
+         f"{ge(MINIMAL_ITEMS, rows['1']['p0'], MINIMAL_ITEMS):.4f}"[1:], tol=5e-5)
+    ext = take("the probe extension", r"(\d+)-to-(\d+) probe extension")
+    if ext is not None and tuple(ext) != (str(Q_BASE), str(Q_EXT)):
+        out.append(f"draft: the probe extension reads {ext[0]}-to-{ext[1]}, "
+                   f"Section 9 extends {Q_BASE} to {Q_EXT}")
+
+    # 7. the contamination screen, recomputed exactly as check_screen() recomputes it
+    nb, p_cand = Q_BASE, 1 / 4
+
+    def upper(k: int) -> float:
+        return sum(comb(nb, i) * p_cand**i * (1 - p_cand) ** (nb - i) for i in range(k, nb + 1))
+
+    reach = min(k for k in range(1, nb + 1) if upper(k) <= 0.05)
+    same("the screen's draws", r"\$q = (\d+)\$ draws", str(nb))
+    same("the candidate count's chance rate", r"chance is \$1/(\d+)\$", str(4))
+    cut = take("the screen threshold", r"discarded when (\d+) or more of the (\d+)")
+    if cut is not None and (int(cut[0]), int(cut[1])) != (reach, nb):
+        out.append(f"draft: the screen discards at {cut[0]} of {cut[1]}, "
+                   f"Section 3 discards at {reach} of {nb}")
+    same("the screen's tail probability", r"probability (\.\d+)",
+         f"{upper(reach):.3f}"[1:], tol=5e-5)
+    same("the screen's retention rule", r"retained at (\d+) or fewer", str(reach - 1))
+
+    # 8. the call count the model-identity paragraph sizes the snapshot against
+    full_calls = calls(ITEMS) * (1 + band_samples(BAND_SHARE))
+    same("the full run's call count", r"about ([\d,]+) calls", f"{full_calls:,.0f}",
+         tol=0.02 * full_calls)
+
+    # 9. the exchangeability rate Prediction 5's ordering clause is counted against
+    rate = take("the ordering clause's no-effect rate", r"\$(\d)/(\d)\$")
+    if rate is not None and abs(int(rate[0]) / int(rate[1]) - rows["5b"]["p0"]) > 1e-9:
+        out.append(f"draft: the ordering clause is counted against {rate[0]}/{rate[1]}, "
+                   f"the protocol's rate for 5b is {rows['5b']['p0']:.4f}")
+
+    # 10. a value S1 does not fix must still be marked as a proposal, not stated as fact
+    i = draft.find("If more than 10%")
+    if i == -1:
+        out.append("draft: the 10% chain-exclusion threshold was not found")
+    else:
+        j = draft.find(". ", i)
+        if "[default]" not in draft[i:j if j != -1 else len(draft)]:
+            out.append("draft: the 10% exclusion threshold is stated without [default]")
+    masked = re.sub(r"more than 10%", " ", masked)
+
+    # 11. coverage: anything numeric left over is a figure with no protocol behind it
+    rest = masked
+    for pat in DRAFT_STRUCTURAL:
+        rest = re.sub(pat, " ", rest)
+    for token in sorted(set(re.findall(r"\d+(?:[.,]\d+)*", rest))):
+        i = rest.find(token)
+        near = " ".join(rest[max(0, i - 30):i + 30].split())
+        out.append(f"draft: the figure {token!r} is not checked against the protocol "
+                   f"[near: {near!r}] - add a rule, or mark it [default] if S1 does not fix it")
+
+    if not out:
+        print("    registration draft: figures match the protocol")
+    return out
+
+
 def main() -> int:
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
     if "--counts" in flags:
@@ -563,6 +803,7 @@ def main() -> int:
     problems.extend(check_multiplicity(text))
     problems.extend(check_screen(text))
     problems.extend(check_costs(text))
+    problems.extend(check_registration_draft())
     problems.extend(check_quotes("--skip-pages" not in flags))
 
     if problems:

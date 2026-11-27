@@ -351,4 +351,22 @@ theory against Section 7 of the protocol.
   the table is a lower bound, and 7.1 now says so. The checker derives the four steps and
   fails the build if the rule, its family size or that bound claim goes missing.
 
+### Registration reconciliation pass (27 November 2026, before deposit)
+
+- `Registration Fields Draft.md` had drifted from S1 a second time: it still set alpha at
+  .05, put all nine predictions into one Holm family, and defined "a substantial share"
+  of censored Arm C chains as one half where Section 7's support line is 20%. It is now
+  derived from the protocol — per-row alpha at .01 with the achieved maxima .0083 and
+  .0059, one family of four with the same four Holm steps, and the five count lines quoted
+  as Section 7.1 states them. The four-item slice and the 40-item run were already the
+  protocol's own figures and are unchanged.
+
+- The draft is working material and stays outside the archive, so no step in the build
+  ever looked at it. `check_thresholds.py` now carries `check_registration_draft()`, which
+  regenerates the draft's figures from the constants that hold the protocol — the same
+  rows, slice size, screen and cost model — and fails the build when one disagrees. It
+  runs only when the file is present, so a clean clone still builds; a number that no rule
+  claims is itself an error, which is what catches a third drift being written in rather
+  than merely repeated.
+
 The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 6,061 words / 10 pp (was 5,854 / 10 pp).
