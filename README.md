@@ -16,13 +16,13 @@ Restorage Drift is a proposed theoretical framework, not an established scientif
 
 Convergence of iterated transmission on a learner's prior is not new: Griffiths and Kalish (2007) established it for iterated Bayesian learning, and Kirby, Dowman and Griffiths (2007) showed that the transmission bottleneck, rather than prior strength, governs how far the outcome departs from unbiased copying.
 
-What this paper claims is narrower. It separates three things that a single measure confounds: which candidates a system can still represent, how much evidence survives for each, and how much reconstructed probability each receives. Two compression pathways are modelled apart — irreversible removal of candidates and decay of evidence below an availability threshold — and only the third operation is reconstruction. Under stated conditions the active candidate set is nested and eventually stabilizes; once it does, the reconstructed distribution converges to a power-weighted prior restricted to the survivors. Two systems with the same prior and parameters therefore reach different attractors if their compressions removed different candidates. The model yields three distinguishable outcomes — gradual probability drift, direct representational loss, and delayed evidence-mediated loss — which share an endpoint and which terminal measurement cannot tell apart. Section 5.8 records why the fixed-*k* truncation used in earlier drafts cannot produce the second or third: with positive retained weights it selects a support once and then does nothing.
+What this paper claims is narrower. It separates three things that a single measure confounds: which candidates a system can still represent, how much evidence survives for each, and how much reconstructed probability each receives. Two compression pathways are modelled apart — irreversible removal of candidates and decay of evidence below an availability threshold — and only the third operation is reconstruction. Under stated conditions the active candidate set is nested and eventually stabilizes; once it does, the reconstructed distribution converges to a power-weighted prior restricted to the survivors. Two systems with the same prior and parameters therefore reach different attractors if their compressions removed different candidates. The model yields three distinguishable outcomes — gradual probability drift, direct representational loss, and delayed evidence-mediated loss — which reach a prior-dominated terminus that differs in which candidates survive, and which a terminal measurement alone need not distinguish. Section 5.8 records why the fixed-*k* truncation used in earlier drafts cannot produce the second or third: with positive retained weights it selects a support once and then does nothing.
 
 ## Contents
 
 | File | What it is |
 |---|---|
-| `Restorage Drift.md` `.pdf` `.docx` | The theory paper, 16 pp, 6,692 words |
+| `Restorage Drift.md` `.pdf` `.docx` | The theory paper, 16 pp, 6,695 words |
 | `Iterative-Summarization Protocol.md` `.pdf` `.docx` | Supplementary Material S1: the pre-registration-ready test protocol |
 | `build.py` | Rebuilds the paper and S1 PDFs |
 | `make_docx.py` | Rebuilds the `.docx` files with fixed table geometry |
@@ -61,7 +61,7 @@ Word count, measured with the LaTeX layout blocks stripped:
 sed -e '/```{=latex}/,/```/d' "Restorage Drift.md" | wc -w
 ```
 
-Current count: 6,692 words, against a 7,500-word journal limit.
+Current count: 6,695 words, against a 7,500-word journal limit.
 
 ## How the framework could fail
 

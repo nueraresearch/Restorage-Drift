@@ -10,7 +10,7 @@ Initial release. Theory paper plus Supplementary Material S1. No empirical data.
 
 ### Paper
 
-- Theory paper at 16 pp, 6,692 words, within a 7,500-word limit.
+- Theory paper at 16 pp, 6,695 words, within a 7,500-word limit.
 - Abstract, keywords, falsifiability conditions, open research questions,
   declarations, and 19 references.
 
@@ -108,4 +108,40 @@ Initial release. Theory paper plus Supplementary Material S1. No empirical data.
   for pre-registration, not as registered.
 - Preprint not yet posted; no DOI yet. The README citation will be updated when
   one exists.
-- Figure 1 has not been checked at print resolution.
+
+### Corrections after first publication (27 November 2026, before deposit)
+
+Five corrections were made to the tagged text after v1.0.0 was first published, and
+before the release was deposited, together with two fixes to the build scripts:
+
+- Abstract: the three drift outcomes were said to share an endpoint. Proposition 3
+  takes its limit over the surviving set, so gradual drift leaves mass on the original
+  while both loss pathways leave none. The abstract now reads as a prior-dominated
+  terminus that differs in which candidates survive, which a terminal measurement
+  alone need not distinguish.
+- README: the same claim in the repository summary, corrected the same way.
+- S1, Arm B2: the passage said a reappearance of a dropped candidate "is prior
+  reconstruction". It now states only the absorbing-support consequence: the
+  candidate leaves the active set and cannot return through reconstruction.
+- S1, evidence landmark: the landmark was defined on the lower of the two codings
+  while the rule required both coders to score below "compatible". It now takes the
+  higher, so it fires only on coder agreement.
+- S1, Prediction 4: "pure prior reconstruction" became reconstruction of the prior
+  over the survivors.
+- Build scripts: `make_docx.py` named a working document that is not in the release, so
+  `python make_docx.py` failed with `missing source` on a fresh clone; its default list
+  now covers the two released documents, and any other is built by passing its name.
+  `figures/make_figures.py` hardcoded a MiKTeX directory under the author's user profile
+  as a fallback for when `kpsewhich` was unavailable; that path is gone, and the faces
+  resolve through `kpsewhich` or an `LM_FONT_DIR` override, failing with the names of the
+  missing files. The figures regenerate byte-identically, so no artwork changed.
+
+One item left the release notes rather than being corrected. The bullet recording that
+Figure 1 had not been checked at print resolution described an earlier state of the
+work, not the state of the release: the figure was rendered and inspected at print
+resolution before deposit, and no change to the artwork followed. Removing the bullet
+changes only this record, not the paper, the figures or the build.
+
+The paper is 6,695 words (was 6,692) and S1 3,162 (was 3,142); both PDFs and DOCX
+builds were regenerated, and the word count was updated wherever it was quoted. Page
+counts are unchanged at 16 and 6.

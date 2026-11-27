@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Regenerate the .docx companions with fixed table geometry.
 
-    python make_docx.py                     # all three documents
+    python make_docx.py                     # both released documents
     python make_docx.py "Restorage Drift"   # one document
 
 Pandoc writes every table column at an equal width and with no borders, so the
@@ -20,10 +20,10 @@ from docx.oxml.ns import qn
 from docx.shared import Twips
 
 ROOT = Path(__file__).resolve().parent
+# The documents in the release. Anything else is built by passing its name explicitly.
 DOCS = [
     "Restorage Drift",
     "Iterative-Summarization Protocol",
-    "Human Restorage Study",
 ]
 
 # 6.5 in of text on Letter at 1 in margins, in twips.

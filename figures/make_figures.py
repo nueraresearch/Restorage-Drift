@@ -5,11 +5,17 @@ S = 3
 # Everything in both figures is set in the paper's own faces, so the figures and the
 # text around them read as one piece of type. pdffonts on the manuscript reports
 # LMRoman10, LMRoman10-Bold and LMMathItalic10; these OTFs ship with the TeX
-# distribution that builds the PDF, so ask kpsewhich where they are and keep this
-# machine's install only as the fallback for when kpsewhich is not on PATH.
-LM_FALLBACK = "C:/Users/monte/AppData/Local/Programs/MiKTeX/fonts/opentype/public"
+# distribution that builds the PDF, so ask kpsewhich where they are. LM_FONT_DIR
+# overrides that lookup for a machine without TeX on PATH: point it at the
+# opentype/public directory that holds lm/ and lm-math/.
+LM_FONT_DIR = os.environ.get("LM_FONT_DIR", "").strip()
 
-def texfont(name, fallback):
+def texfont(name, sub):
+    """Path to a Latin Modern OTF: $LM_FONT_DIR first, then kpsewhich, else None."""
+    if LM_FONT_DIR:
+        p = os.path.join(LM_FONT_DIR, sub.lstrip("/"), name)
+        if os.path.exists(p):
+            return p
     exe = shutil.which("kpsewhich")
     if exe:
         try:
@@ -19,19 +25,22 @@ def texfont(name, fallback):
             found = ""
         if found and os.path.exists(found):
             return found
-    return fallback
+    return None
 
 def lm(sub, name):
-    return texfont(name, LM_FALLBACK + sub)
+    return texfont(name, sub)
 
 FR = lm("/lm/lmroman10-regular.otf", "lmroman10-regular.otf")          # text
 FB = lm("/lm/lmroman10-bold.otf", "lmroman10-bold.otf")                # node labels
 FI = lm("/lm/lmroman10-italic.otf", "lmroman10-italic.otf")            # glosses
 LMI = lm("/lm-math/latinmodern-math.otf", "latinmodern-math.otf")      # math italic, Greek
-for f in (FB, FR, FI, LMI):
-    if not os.path.exists(f):
-        raise SystemExit("missing font " + f +
-                         "\n  Latin Modern comes from a TeX distribution; install TeX Live or MiKTeX")
+MISSING = [name for name, path in (("lmroman10-regular.otf", FR), ("lmroman10-bold.otf", FB),
+                                  ("lmroman10-italic.otf", FI), ("latinmodern-math.otf", LMI))
+           if not path]
+if MISSING:
+    raise SystemExit("missing Latin Modern font(s): " + ", ".join(MISSING) +
+                     "\n  They ship with any TeX distribution. Put kpsewhich on PATH, or set" +
+                     "\n  LM_FONT_DIR to the opentype/public directory holding lm/ and lm-math/.")
 
 def mi(ch):
     """Math-italic Latin letter from Latin Modern Math (ASCII maps to upright)."""
