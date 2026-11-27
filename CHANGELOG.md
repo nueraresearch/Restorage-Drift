@@ -328,4 +328,10 @@ theory against Section 7 of the protocol.
   must have a name and a well-formed ORCID. Nine mutations each stop the build with the
   field named.
 
+- The deposit dry run now has a versioned record, `DEPOSIT.md`: the 20-file inventory
+  with per-file sizes and the 1,719,125-byte total measured at a4f130d, the commands
+  that show S2, the registration draft and build intermediates absent from the index, and
+  which schema validated the metadata and why the strict one is not the test applied.
+  It names commits instead of saying "current", so each figure can be re-derived.
+
 The paper is 6,925 words / 17 pp (was 6,853 / 16 pp); S1 is 5,700 words / 10 pp (was 5,206 / 9 pp).
